@@ -14,8 +14,8 @@ if __name__ == '__main__' and __package__ is None:
 from cortical_sheet import OscillatorArray
 from wavelet import wavelet, constant
 from interaction import Interaction
-from lib.plot_solution import (plot_contour,
-                               plot_timeseries)
+from plotting.plot_solution import (plot_contour,
+                                    plot_timeseries)
 
 
 class KuramotoSystem(object):

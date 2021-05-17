@@ -17,7 +17,7 @@ sys.path.append(Path(__file__).resolve().parents[1])
 if __name__ == '__main__' and __package__ is None:
     __package__ = 'kurosc'
 
-from lib.plotformat import PlotSetup
+from plotting.plotformat import PlotSetup
 
 
 """

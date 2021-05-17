@@ -10,7 +10,7 @@ if __name__ == '__main__' and __package__ is None:
     __package__ = 'kurosc'
 
 import numpy as np
-from lib.plot_solution import plot_phase
+from plotting.plot_solution import plot_phase
 from wavelet import gaussian, gauss_width
 
 

@@ -5,7 +5,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import StrMethodFormatter
 
-from lib.plotformat import PlotSetup
+from plotting.plotformat import PlotSetup
 
 import re
 import numpy as np

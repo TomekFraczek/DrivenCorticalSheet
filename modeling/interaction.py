@@ -2,7 +2,7 @@
 second order neural interrupting interactions
 interaction is class, gamma is function, delta function
 
-if need to run in here pull in lib folder to dir
+if need to run in here pull in plotting folder to dir
 """
 import sys
 import os
@@ -13,7 +13,7 @@ sys.path.append(Path(__file__).resolve().parents[1])
 if __name__ == '__main__' and __package__ is None:
     __package__ = 'kurosc'
 
-from lib.plotformat import PlotSetup
+from plotting.plotformat import PlotSetup
 
 import numpy as np
 import matplotlib as mpl
@@ -77,7 +77,7 @@ class Interaction(object):
 
 
 def main():
-    """plot needs lib in this wd
+    """plot needs plotting in this wd
     """
 
     params = ({'beta': 0.25, 'r': 0.95},

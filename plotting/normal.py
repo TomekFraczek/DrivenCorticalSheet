@@ -14,7 +14,7 @@ def normal_dist(obj, kernel,
                 )->np.ndarray:
 
     """construct a normal dist frequency lookup
-    # can be packaged to lib but need some onject passing
+    # can be packaged to plotting but need some onject passing
     """
     x = np.linspace(0,distance,int(resolution)) # Half curve
 

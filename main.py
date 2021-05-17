@@ -1,25 +1,13 @@
-"""
-"""
-import sys
-from pathlib import Path
-sys.path.append(Path(__file__).resolve())
-if __name__ == '__main__' and __package__ is None:
-    __package__ = 'kurosc'
 
-from datetime import datetime as dt
-import numpy as np
 import json
 import argparse
 
-##
-from model import KuramotoSystem
-from lib.animate import Animate
-from lib.plot_solution import plot_output, save_data
+import numpy as np
 
-# annotate:
-#
-# note on mthds for ode soln
-# https://scicomp.stackexchange.com/questions/27178/bdf-vs-implicit-runge-kutta-time-stepping
+from pathlib import Path
+from modeling.model import KuramotoSystem
+from plotting.animate import Animate
+from plotting.plot_solution import plot_output, save_data
 
 
 def run(config_set: str = 'local_sync', config_file: str = 'model_config.json'):
@@ -76,7 +64,7 @@ def run(config_set: str = 'local_sync', config_file: str = 'model_config.json'):
 
     if save_numpy:
         print('\ndata save is set to:',save_numpy,'type', type(save_numpy),
-        '\noutput to:', title, 'levels up from lib')
+        '\noutput to:', title, 'levels up from plotting')
         save_data(solution,title)
 
     # Plotting & animation
