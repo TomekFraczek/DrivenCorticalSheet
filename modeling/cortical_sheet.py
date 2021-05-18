@@ -5,28 +5,21 @@ distance array
 """
 
 import numpy as np
-from plotting.plot_solution import plot_phase
 from modeling.wavelet import gaussian, gauss_width
 
 
 class OscillatorArray(object):
     def __init__(self,  dimension: tuple, system_params, gain):
+        print(f'Initializing {dimension} oscillator array...')
         self.init_params = system_params['initial']
         self.freq_params = system_params['natural_freq']
 
-        self.ic = np.linspace(0, 2 * np.pi, dimension[0] * dimension[1]).reshape(dimension)  # self.prep_initial_conditions(*dimension)
+        self.ic = self.prep_initial_conditions(*dimension)
         # Useful debug initital conditions that neatly increase over the whole space
-        # np.linspace(0, 2 * np.pi, dimension[0] * dimension[1]).reshape(dimension)
+        #     np.linspace(0, 2 * np.pi, dimension[0] * dimension[1]).reshape(dimension)
 
         self.natural_frequency = self.prep_natural_frequency()
         self.distance = self.prep_distance()
-
-        self.plot_phase = plot_phase
-        self.plot_directory = None  # initialized in a plot module i think
-
-        # for labeling plots:
-        self.interaction_params = system_params['interaction']
-        self.kernel_params = system_params['kernel']
 
         self.gain = gain
 
@@ -46,11 +39,9 @@ class OscillatorArray(object):
         else:
             raise KeyError('Invalid initial conditions!')
 
-        print(f'\nintial contitions ({params["type"]}) in phase space:',
-              np.round(np.mean(phase), 3),
-              '\nstdev:',
-              np.round(np.std(phase), 3)
-              )
+        print(f'    initial conditions ({params["type"]}) in phase space:\n '
+              f'        mean: {np.round(np.mean(phase), 3)}\n'
+              f'        st dev: {np.round(np.std(phase), 3)}')
 
         return phase
 
@@ -68,12 +59,10 @@ class OscillatorArray(object):
         rng = np.random.default_rng()
         frequency = rng.choice(x, size=np.prod(self.ic.shape), p=prob, replace=True)
 
-        print('\nmean natural frequency in hz:',
-              np.round(np.mean(frequency),3),
-              '\nstdev:',
-              np.round(np.std(frequency),3),
-              '\nconverted to phase angle on output'
-              )
+        print(f'    natural frequency stats in hz:'
+              f'        mean: {np.round(np.mean(frequency),3)}'
+              f'        st dev: {np.round(np.std(frequency),3)}'
+              f'    converted to phase angle on output')
         return frequency*np.pi*2
 
     def prep_distance(self, t: str = 'float') -> np.ndarray:
@@ -94,25 +83,3 @@ class OscillatorArray(object):
         for (k,x) in enumerate(z):
             d[k,:] = np.array(np.sqrt((u - x[0])**2 + (v - x[1])**2),dtype=t)
         return d
-
-
-def main():
-    """this demos a random contour plot"""
-    cortical_array = OscillatorArray((64, 64), (-np.pi, np.pi), 1)
-    x = np.linspace(0, cortical_array.ic.shape[0], cortical_array.ic.shape[1])
-    y = np.linspace(0, cortical_array.ic.shape[1], cortical_array.ic.shape[0])
-    x, y = np.meshgrid(x, y)
-
-    phase_array = np.asarray([x.ravel(),
-                              y.ravel(),
-                              cortical_array.ic.ravel()]
-                              ).T
-
-    cortical_array.plot_phase(phase_array,
-                             'Oscillator Phase $\in$ [-$\pi$,$\pi$)',
-                             'Location y',
-                             'Location x'
-                             )
-
-if __name__ == '__main__':
-    main()
