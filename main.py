@@ -14,7 +14,7 @@ PHASES_NAME = 'oscillators', 'npy'
 TIME_NAME = 'time', 'npy'
 
 
-def model(config, label='simulation'):
+def model(config, fmt: (str, PlotSetup) = 'simulation'):
     """Prepare and run a cortical sheet simulation based on the passed config dictionary"""
 
     nodes_side = config['sqrt_nodes']
@@ -46,20 +46,22 @@ def model(config, label='simulation'):
     osc_state = solution.y.reshape((nodes_side, nodes_side, solution.t.shape[0]))
 
     if config['save_numpy']:
-        label = save_data(label, config, osc_state, solution.t)
+        fmt = save_data(fmt, config, osc_state, solution.t)
 
-    return osc_state, solution.t, label
+    return osc_state, solution.t, fmt
 
 
-def save_data(label, config, osc_state, time):
+def save_data(fmt, config, osc_state, time):
     """Load the result of a simulation run to the target directory"""
-    fmt = PlotSetup(label=label)
+    fmt = fmt if hasattr(fmt, 'file_name') else PlotSetup(label=fmt)
+    print(f'Saving to {fmt.directory}')
+
     with open(fmt.file_name(*CONFIG_NAME), 'w') as f:
         json.dump(config, f, indent=2)
     np.save(fmt.file_name(*PHASES_NAME), osc_state)
     np.save(fmt.file_name(*TIME_NAME), time)
 
-    return fmt.label
+    return fmt
 
 
 def load_data(data_folder):
@@ -73,7 +75,7 @@ def load_data(data_folder):
     return config, osc_state, time, fmt
 
 
-def plot(config=None, osc_states=None, time=None, data_folder=None, label=None):
+def plot(config=None, osc_states=None, time=None, data_folder=None, fmt=None):
     """Plot a gif of the phase evolution over time for the given data, optionally loaded from disk"""
 
     # No data provided explicitly, need to load from the passed folder
@@ -84,22 +86,21 @@ def plot(config=None, osc_states=None, time=None, data_folder=None, label=None):
     elif data_folder is None and (config is None or osc_states is None or time is None):
         raise KeyError('Both the data_folder and the data contents were left blank!')
 
-    else:
-        fmt = PlotSetup(label=label, readonly=True)
-
     vid = Animator(config, fmt)
     vid.animate(osc_states, time, cleanup=False)
 
 
-def run(config_set: str = 'local_sync', config_file: str = 'model_config.json', do_plot=True):
+def run(config_set: str = 'local_sync', config_file: str = 'model_config.json', base_path='plots', do_plot=True):
     """Run a model based on the passed config file and immediately plot the results"""
     with open(Path(config_file).resolve()) as f:
         var = json.load(f)
     config = var[config_set]
 
-    oscillator_state, time, label = model(config, label=config_set)
+    path_fmt = PlotSetup(base_path, config_set)
+
+    oscillator_state, time, path_fmt = model(config, path_fmt)
     if do_plot:
-        plot(config=config, osc_states=oscillator_state, time=time, label=label)
+        plot(config=config, osc_states=oscillator_state, time=time, fmt=path_fmt)
 
 
 def main():
@@ -116,13 +117,16 @@ def main():
                         help='model_config.json path, default is pwd',
                         default='model_config.json')
 
-    parser.add_argument('-plot', metavar='plot right away',
+    parser.add_argument('--out', metavar='output directory',
                         type=str, nargs='?',
-                        help='Whether to plot the results right away',
-                        default=True)
+                        help='base path to output raw data and plots',
+                        default='plots')
+
+    parser.add_argument('--plot', action='store_true',
+                        help='Whether to plot the results right away')
 
     args = parser.parse_args()
-    run(args.set, args.path)
+    run(args.set, args.path, do_plot=args.plot)
 
 
 if __name__ == '__main__':
