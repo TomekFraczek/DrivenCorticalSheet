@@ -111,7 +111,7 @@ def plot(config=None, osc_states=None, time=None, data_folder=None, fmt=None):
         raise KeyError('Both the data_folder and the data contents were left blank!')
 
     vid = Animator(config, fmt)
-    vid.animate(osc_states, time, cleanup=True)
+    # vid.animate(osc_states, time, cleanup=True)
 
     plot_interaction(config['sqrt_nodes'], config['system'], config['gain_ratio'], out_fmt=fmt)
 

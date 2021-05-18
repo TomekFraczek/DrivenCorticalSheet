@@ -17,16 +17,17 @@ class KuramotoSystem(object):
 
         print('Initializing model...')
         self.gain = gain
-        self.kernel_params = system_params['kernel']
+
         self.interaction_params = system_params['interaction']
+        self.interaction = Interaction(array_size, **self.interaction_params)
 
-        if initialize:
-            self.osc = OscillatorArray(array_size, system_params, gain)
-
+        self.kernel_params = system_params['kernel']
         self.wavelet_func = make_kernel('wavelet', **self.kernel_params)
-        self.wavelet = self.wavelet_func(self.osc.distance.ravel())
 
-        self.interaction = Interaction(self.osc.ic.shape, **self.interaction_params)
+        if initialize:  # Option to not initialize for later plotting purposes
+            self.osc = OscillatorArray(array_size, system_params, gain)
+            self.wavelet = self.wavelet_func(self.osc.distance.ravel())
+
         self.external_input = external_input
         self.input_weight = input_weight
         print('System ready!')
@@ -98,11 +99,11 @@ def plot_existing_interaction(deltas, dists, system, out_fmt=None):
 
     for i in range(len(diff_part)):
         for j in range(len(wave_part)):
-            interaction[i, j] = (system.gain/np.prod(system.osc.ic.shape)) * diff_part[i] * wave_part[j]
+            interaction[i, j] = (system.gain/len(dists)**2) * diff_part[i] * wave_part[j]
 
     deltas, dists = np.meshgrid(deltas, dists)
 
-    plt.figure(figsize=(10, 8))
+    plt.figure(figsize=(15, 12))
     plt.pcolormesh(deltas.T, dists.T, interaction, cmap='coolwarm', shading='gouraud')
     plt.colorbar()
     plt.title(f'Interaction term -- '
