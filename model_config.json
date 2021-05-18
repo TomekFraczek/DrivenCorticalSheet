@@ -104,7 +104,7 @@
     "inspect_t_seconds": 0.35,
     "inspect_t_samples": 3,
 
-    "sqrt_nodes": 90,
+    "sqrt_nodes": 80,
     "time": 5,
 
     "system": {
