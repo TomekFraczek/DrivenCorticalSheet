@@ -11,6 +11,7 @@ from plotting.plot_solution import PlotSetup
 
 CONFIG_NAME = 'config', 'json'
 PHASES_NAME = 'oscillators', 'npy'
+NOTES_NAME = 'notes', 'txt'
 TIME_NAME = 'time', 'npy'
 
 
@@ -35,31 +36,44 @@ def model(config, fmt: (str, PlotSetup) = 'simulation'):
     # Run Model
     time_eval = np.linspace(0, time, config['frames'])
 
-    solution = kuramoto.solve(
-        (0, time),
-        config['ODE_method'],  # too stiff for 'RK45', use 'LSODA',‘BDF’,'Radau'
-        config['continuous_soln'],
-        time_eval,
-        config['max_delta_t'],
-        config['zero_ics'],
-    )
-    osc_state = solution.y.reshape((nodes_side, nodes_side, solution.t.shape[0]))
+    try:
+        solution = kuramoto.solve(
+            (0, time),
+            config['ODE_method'],  # too stiff for 'RK45', use 'LSODA',‘BDF’,'Radau'
+            config['continuous_soln'],
+            time_eval,
+            config['max_delta_t'],
+            config['zero_ics'],
+        )
+        osc_state = solution.y.reshape((nodes_side, nodes_side, solution.t.shape[0]))
+        time = solution.t
+        msg = solution.message
+    except Exception as e:
+        print('Integration failed!')
+        osc_state = None
+        time = None
+        msg = f'{e}'
 
     if config['save_numpy']:
-        fmt = save_data(fmt, config, osc_state, solution.t)
+        fmt = save_data(fmt, config, osc_state, time, msg)
 
-    return osc_state, solution.t, fmt
+    return osc_state, time, fmt
 
 
-def save_data(fmt, config, osc_state, time):
+def save_data(fmt, config, osc_state=None, time=None, solver_notes=None):
     """Load the result of a simulation run to the target directory"""
     fmt = fmt if hasattr(fmt, 'file_name') else PlotSetup(label=fmt)
     print(f'Saving to {fmt.directory}')
 
     with open(fmt.file_name(*CONFIG_NAME), 'w') as f:
         json.dump(config, f, indent=2)
-    np.save(fmt.file_name(*PHASES_NAME), osc_state)
-    np.save(fmt.file_name(*TIME_NAME), time)
+    with open(fmt.file_name(*NOTES_NAME), 'w') as f:
+        if solver_notes:
+            f.write(solver_notes)
+    if osc_state is not None:
+        np.save(fmt.file_name(*PHASES_NAME), osc_state)
+    if time is not None:
+        np.save(fmt.file_name(*TIME_NAME), time)
 
     return fmt
 
