@@ -1,8 +1,10 @@
 import json
 import argparse
+import sys
 
 import numpy as np
 
+from logger import Logger
 from pathlib import Path
 from modeling.model import KuramotoSystem
 from plotting.animate import Animator
@@ -13,6 +15,7 @@ CONFIG_NAME = 'config', 'json'
 PHASES_NAME = 'oscillators', 'npy'
 NOTES_NAME = 'notes', 'txt'
 TIME_NAME = 'time', 'npy'
+LOG_NAME = 'log', 'txt'
 
 
 def model(config, fmt: (str, PlotSetup) = 'simulation'):
@@ -106,11 +109,13 @@ def plot(config=None, osc_states=None, time=None, data_folder=None, fmt=None):
 
 def run(config_set: str = 'local_sync', config_file: str = 'model_config.json', base_path='plots', do_plot=True):
     """Run a model based on the passed config file and immediately plot the results"""
+
+    path_fmt = PlotSetup(base_path, config_set)
+    sys.stdout = Logger(path_fmt.file_name(*LOG_NAME))
+
     with open(Path(config_file).resolve()) as f:
         var = json.load(f)
     config = var[config_set]
-
-    path_fmt = PlotSetup(base_path, config_set)
 
     oscillator_state, time, path_fmt = model(config, path_fmt)
     if do_plot:
