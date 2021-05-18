@@ -24,6 +24,8 @@ class KuramotoSystem(object):
         self.external_input = external_input
         self.input_weight = input_weight
 
+        self.prev_t = 0
+
     def differential_equation(self,
                               t:float,
                               x:np.ndarray,
@@ -50,7 +52,11 @@ class KuramotoSystem(object):
         if self.external_input:
             dx += self.input_weight*self.external_input_fn(t)
 
+        if t - self.prev_t < 1e-6:
+            print(f'Small timestep. dx stats are: mean {np.mean(dx)} stdev {np.std(dx)} min {np.min(dx)} max {np.max(dx)}')
+
         print('t_step:', np.round(t, 4))
+
 
         return dx
 
