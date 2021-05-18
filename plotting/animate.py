@@ -14,7 +14,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import StrMethodFormatter
 from plotting.plotformat import PlotSetup
-
+from progressbar import progressbar
 
 # gif_maker many thanks
 # https://stackoverflow.com/questions/753190/programmatically-generate-video-or-animated-gif-in-python
@@ -54,7 +54,8 @@ class Animator(object):
 
     def plot_frames(self, oscillator_states, times):
         """Plot the phases of all oscillators through time"""
-        for k in np.arange(oscillator_states.shape[2]):
+        print('Preparing frames...')
+        for k in progressbar(np.arange(oscillator_states.shape[2])):
             oscillators_now = oscillator_states[..., k]
             self.plot_frame(oscillators_now, times[k])
 
@@ -82,6 +83,7 @@ class Animator(object):
 
     def to_gif(self, sort: bool = False, ext: str = 'png'):
         """Convert all the .png images in this dir into a gif, sorting by timestamp if requested"""
+        print('Stitching into a gif...')
         file_list = [
             f for f in os.listdir(self.temp.directory)
             if isfile(join(self.temp.directory, f)) and f.endswith(ext)

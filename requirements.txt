@@ -3,3 +3,4 @@ scipy==1.6.2
 matplotlib==3.3.4
 imageio
 slugify
+progressbar2
