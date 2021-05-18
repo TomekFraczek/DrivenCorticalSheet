@@ -90,7 +90,53 @@
     "external_input":false,
     "external_input_weight":0
   },
+  "large_weak": {
+    "output_dir_name": "placeholder",
+    "save_numpy": true,
 
+    "ODE_method": "LSODA",
+    "continuous_soln": true,
+    "max_delta_t": 0.1,
+    "zero_ics": false,
+    "frames": 500,
+    "frame_rate": 0.10,
+    "interpolate_plot": false,
+    "inspect_t_seconds": 0.35,
+    "inspect_t_samples": 3,
+
+    "sqrt_nodes": 50,
+    "time": 10,
+
+    "system": {
+      "initial": {
+        "type": "uniform",
+        "low": 0,
+        "high": 6.28318
+      },
+      "interaction" : {
+        "beta":0,
+        "r":0
+      },
+      "kernel" : {
+        "s":3,
+        "width": 40
+      },
+      "normalize_kernel": false,
+      "natural_freq": {
+        "a": 1,
+        "b": 0,
+        "c": 0.4
+      },
+      "driver": {
+        "use_driver": false,
+        "driver_weight":0
+      }
+    },
+    "gain_ratio": 1,
+
+    "external_input":false,
+    "external_input_weight":0
+  },
   "global_sync": {
           "output_dir_name": "placeholder",
     "save_numpy": false,
