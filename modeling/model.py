@@ -115,7 +115,8 @@ def plot_interaction():
 
     plt.figure()
     plt.pcolormesh(deltas.T, dists.T, interaction, cmap='coolwarm', shading='gouraud')
-    plt.title(f'Interaction term')
+    plt.colorbar()
+    plt.title(f'Interaction term: [r={r}, $\\beta$={beta}], [s={s}, width={width}] ')
     plt.xlabel('Phase Difference')
     plt.ylabel('Node Distance')
 

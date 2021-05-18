@@ -41,7 +41,7 @@ class Interaction(object):
         return d
 
     def gamma(self, x: np.ndarray) -> np.ndarray:
-        return np.sin(x+self.beta) + self.r*np.sin(2*x)
+        return -np.sin(x+self.beta) + self.r*np.sin(2*x)
 
     def plot_phase(self,
                    X: np.ndarray,
@@ -71,7 +71,8 @@ def main():
     """plot needs plotting in this wd
     """
 
-    params = ({'beta': 0.25, 'r': 0.95},
+    params = ({'beta': 0.0, 'r': 0.0},
+              {'beta': 0.25, 'r': 0.95},
               {'beta': 0.25, 'r': 0.8},
               {'beta': 0.25, 'r': 0.7},
               )
