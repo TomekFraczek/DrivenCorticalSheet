@@ -54,6 +54,7 @@ class KuramotoSystem(object):
 
         if t - self.prev_t < 1e-6:
             print(f'Small timestep. dx stats are: mean {np.mean(dx)} stdev {np.std(dx)} min {np.min(dx)} max {np.max(dx)}')
+        self.prev_t = t
 
         print('t_step:', np.round(t, 4))
 
