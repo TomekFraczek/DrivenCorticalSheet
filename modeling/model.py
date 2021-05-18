@@ -52,11 +52,12 @@ class KuramotoSystem(object):
         if self.external_input:
             dx += self.input_weight*self.external_input_fn(t)
 
-        if t - self.prev_t < 1e-6:
-            print(f'Small timestep. dx stats are: mean {np.mean(dx)} stdev {np.std(dx)} min {np.min(dx)} max {np.max(dx)}')
+        msg = f't_step: {np.round(t, 4)}'
+        if t - self.prev_t < 1e-8:
+            msg += f'Small timestep. dx stats are: mean {np.mean(dx)} stdev {np.std(dx)} min {np.min(dx)} max {np.max(dx)}'
         self.prev_t = t
 
-        print('t_step:', np.round(t, 4))
+        print(msg)
 
 
         return dx
