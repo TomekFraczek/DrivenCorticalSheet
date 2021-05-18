@@ -13,14 +13,15 @@ np.set_printoptions(precision=3, suppress=True)
 
 class KuramotoSystem(object):
     def __init__(self, array_size, system_params, gain,
-                 external_input: bool = False, input_weight: float = 0, ):
+                 external_input: bool = False, input_weight: float = 0, initialize=True):
 
         print('Initializing model...')
         self.gain = gain
         self.kernel_params = system_params['kernel']
         self.interaction_params = system_params['interaction']
 
-        self.osc = OscillatorArray(array_size, system_params, gain)
+        if initialize:
+            self.osc = OscillatorArray(array_size, system_params, gain)
 
         self.wavelet_func = make_kernel('wavelet', **self.kernel_params)
         self.wavelet = self.wavelet_func(self.osc.distance.ravel())
@@ -89,12 +90,7 @@ class KuramotoSystem(object):
         return 0
 
 
-def plot_interaction(size, sys_params, gain_ratio=1, out_fmt=None):
-    deltas = np.linspace(-np.pi, np.pi, 100)
-    dists = np.linspace(-size/2, size/2, size+1)
-
-    system = KuramotoSystem((size, size), sys_params, gain_ratio)
-
+def plot_existing_interaction(deltas, dists, system, out_fmt=None):
     diff_part = system.interaction.gamma(deltas)
     wave_part = system.wavelet_func(dists)
 
@@ -102,7 +98,7 @@ def plot_interaction(size, sys_params, gain_ratio=1, out_fmt=None):
 
     for i in range(len(diff_part)):
         for j in range(len(wave_part)):
-            interaction[i, j] = gain_ratio * diff_part[i] * wave_part[j]
+            interaction[i, j] = (system.gain/np.prod(system.osc.ic.shape)) * diff_part[i] * wave_part[j]
 
     deltas, dists = np.meshgrid(deltas, dists)
 
@@ -119,6 +115,14 @@ def plot_interaction(size, sys_params, gain_ratio=1, out_fmt=None):
         plt.show()
     else:
         plt.savefig(out_fmt.file_name('interaction', 'png'))
+
+
+def plot_interaction(size, sys_params, gain_ratio=1, out_fmt=None):
+    deltas = np.linspace(-np.pi, np.pi, 100)
+    dists = np.linspace(-size/2, size/2, size+1)
+
+    system = KuramotoSystem((size, size), sys_params, gain_ratio, initialize=False)
+    plot_existing_interaction(deltas, dists, system, out_fmt)
 
 
 if __name__ == "__main__":

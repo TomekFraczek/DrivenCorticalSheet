@@ -66,7 +66,7 @@ def model(config, fmt: (str, PlotSetup) = 'simulation'):
 def save_data(fmt, config, osc_state=None, time=None, solver_notes=None):
     """Load the result of a simulation run to the target directory"""
     import subprocess
-    git_hash = subprocess.check_output(["git", "describe", "--output"]).strip()
+    git_hash = subprocess.check_output(["git", "describe", "--always"]).strip()
     git_url = subprocess.check_output(["git", "config", "--get", "remote.origin.url"]).strip()
     solver_notes += f'\n\nCode used for this run:\n' \
                     f'    git url: {git_url}\n' \
@@ -111,7 +111,9 @@ def plot(config=None, osc_states=None, time=None, data_folder=None, fmt=None):
         raise KeyError('Both the data_folder and the data contents were left blank!')
 
     vid = Animator(config, fmt)
-    vid.animate(osc_states, time, cleanup=False)
+    vid.animate(osc_states, time, cleanup=True)
+
+    plot_interaction(config['sqrt_nodes'], config['system'], config['gain_ratio'], out_fmt=fmt)
 
 
 def run(config_set: str = 'local_sync', config_file: str = 'model_config.json', base_path='plots', do_plot=True):
@@ -127,7 +129,6 @@ def run(config_set: str = 'local_sync', config_file: str = 'model_config.json', 
     oscillator_state, time, path_fmt = model(config, path_fmt)
     if do_plot:
         plot(config=config, osc_states=oscillator_state, time=time, fmt=path_fmt)
-    plot_interaction(config['sqrt_nodes'], config['system'], config['gain_ratio'], out_fmt=path_fmt)
 
 
 def main():
