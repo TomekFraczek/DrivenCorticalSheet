@@ -24,7 +24,7 @@ class KuramotoSystem(object):
         self.external_input = external_input
         self.input_weight = input_weight
 
-        self.prev_t = 0
+        self.recent_ts = np.zeros((10,))
 
     def differential_equation(self,
                               t:float,
@@ -53,9 +53,10 @@ class KuramotoSystem(object):
             dx += self.input_weight*self.external_input_fn(t)
 
         msg = f't_step: {np.round(t, 4)}'
-        if t - self.prev_t < 1e-8:
+        if t - np.mean(self.recent_ts) < 1e-6:
             msg += f'Small timestep. dx stats are: mean {np.mean(dx)} stdev {np.std(dx)} min {np.min(dx)} max {np.max(dx)}'
-        self.prev_t = t
+        self.recent_ts = np.roll(self.recent_ts, 1)
+        self.recent_ts[0] = t
 
         print(msg)
 
