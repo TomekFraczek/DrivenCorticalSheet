@@ -65,6 +65,13 @@ def model(config, fmt: (str, PlotSetup) = 'simulation'):
 
 def save_data(fmt, config, osc_state=None, time=None, solver_notes=None):
     """Load the result of a simulation run to the target directory"""
+    import subprocess
+    git_hash = subprocess.check_output(["git", "describe", "--output"]).strip()
+    git_url = subprocess.check_output(["git", "config", "--get", "remote.origin.url"]).strip()
+    solver_notes += f'\n\nCode used for this run:\n' \
+                    f'    git url: {git_url}\n' \
+                    f'    commit hash: {git_hash}'
+
     fmt = fmt if hasattr(fmt, 'file_name') else PlotSetup(label=fmt)
     print(f'Saving to {fmt.directory}')
 
