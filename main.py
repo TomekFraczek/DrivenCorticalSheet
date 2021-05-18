@@ -1,4 +1,4 @@
-
+import os
 import json
 import argparse
 
@@ -6,16 +6,16 @@ import numpy as np
 
 from pathlib import Path
 from modeling.model import KuramotoSystem
-from plotting.animate import Animate
-from plotting.plot_solution import plot_output, save_data
+from plotting.animate import Animator
+from plotting.plot_solution import plot_output, PlotSetup
 
 
-def run(config_set: str = 'local_sync', config_file: str = 'model_config.json'):
+CONFIG_NAME = 'config', 'json'
+PHASES_NAME = 'oscillators', 'npy'
+TIME_NAME = 'time', 'npy'
 
-    with open(Path(config_file).resolve()) as f:
-        var = json.load(f)
-    config = var[config_set]
 
+def model(config, label='simulation'):
     # Load all variables from specified set in json
     nodes_side = config['sqrt_nodes']
     time = config['time']
@@ -47,40 +47,65 @@ def run(config_set: str = 'local_sync', config_file: str = 'model_config.json'):
         config['zero_ics'],
     )
 
-    osc_state = solution.y.reshape((nodes_side,
-                                    nodes_side,
-                                    solution.t.shape[0]
-                                    ))
-
-    print('\nsol.shape:', solution.y.shape,
-          '\nt.shape:', solution.t.shape,
-          '\nosc.shape:', osc_state.shape)
+    osc_state = solution.y.reshape((nodes_side, nodes_side, solution.t.shape[0]))
 
     # Data labeling
-    param = lambda d: [''.join(f'{key}={value}') for (key,value) in d.items()]
+    param = lambda d: [''.join(f'{key}={value}') for (key, value) in d.items()]
     title = f'{nodes_side}_osc_with_kn={int(gain/nodes_side**2)}_at_t_{time}_'
     title += '_'.join(param(config['system']['interaction']))
     title += '_'+'_'.join(param(config['system']['kernel']))
 
     if save_numpy:
-        print('\ndata save is set to:',save_numpy,'type', type(save_numpy),
-        '\noutput to:', title, 'levels up from plotting')
-        save_data(solution,title)
+        label = save_data(label, config, osc_state, solution.t)
 
-    # Plotting & animation
-    # kuramoto.plot_solution(osc_state[-1],solution.t[-1])
+    return osc_state, solution.t, label
 
-    plot_output(kuramoto, kuramoto.osc,
-                osc_state, solution.t,
-                config['inspect_t_samples'],
-                config['inspect_t_seconds'],
-                config['interpolate_plot'])
 
-    vid = Animate(kuramoto.osc.plot_directory)
-    vid.to_gif(None, config['frame_rate'], sort=True, clean=True)
-    print(vid.img_name)
+def save_data(label, config, osc_state, time):
+    fmt = PlotSetup(label=label)
+    with open(fmt.file_name(*CONFIG_NAME), 'w') as f:
+        json.dump(config, f, indent=2)
+    np.save(fmt.file_name(*PHASES_NAME), osc_state)
+    np.save(fmt.file_name(*TIME_NAME), time)
 
-    #TODO post process numpy array to have time series or just hadle it in this chain
+    return fmt.label
+
+
+def load_data(data_folder):
+    fmt = PlotSetup(base_folder=data_folder, readonly=True)
+    with open(fmt.file_name(*CONFIG_NAME)) as f:
+        config = json.load(f)
+    osc_state = np.load(fmt.file_name(*PHASES_NAME))
+    time = np.load(fmt.file_name(*TIME_NAME))
+
+    return config, osc_state, time, fmt
+
+
+def plot(config=None, osc_states=None, time=None, data_folder=None, label=None):
+
+    # No data provided explicitly, need to load from the passed folder
+    if data_folder is not None and (config is None or osc_states is None or time is None):
+        config, osc_states, time, fmt = load_data(data_folder)
+
+    # Insufficient info provided, we don't know what to plot!
+    elif data_folder is None and (config is None or osc_states is None or time is None):
+        raise KeyError('Both the data_folder and the data contents were left blank!')
+
+    else:
+        fmt = PlotSetup(label=label, readonly=True)
+
+    vid = Animator(config, fmt)
+    vid.animate(osc_states, time, cleanup=False)
+
+
+def run(config_set: str = 'local_sync', config_file: str = 'model_config.json'):
+
+    with open(Path(config_file).resolve()) as f:
+        var = json.load(f)
+    config = var[config_set]
+
+    oscillator_state, time, label = model(config, label=config_set)
+    plot(config=config, osc_states=oscillator_state, time=time, label=label)
 
 
 def main():
@@ -90,7 +115,6 @@ def main():
                         type=str, nargs='?',
                         help='model_config.json key like global_sync',
                         default='test_set')
-
 
     parser.add_argument('--path', metavar='directory to config.json',
                         type=str, nargs='?',

@@ -10,7 +10,11 @@ import sys
 import re
 import shutil
 import numpy as np
+from copy import deepcopy
 from os.path import isfile, join
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+from matplotlib.ticker import StrMethodFormatter
 
 from pathlib import Path
 sys.path.append(Path(__file__).resolve().parents[1])
@@ -33,52 +37,90 @@ img.save(fp=fp_out, format='GIF', append_images=imgs,
 """
 
 
-class Animate(object):
-    def __init__(self, out_folder_name:str):
-        self.plot_directory = out_folder_name
-        self.img_name = None
-        self.fmt = PlotSetup('animation')
+class Animator(object):
+    def __init__(self, model_config, dir_format: PlotSetup, fig_size=(10, 8)):
+        self.dir_format = dir_format
+        self.config = model_config
 
-    def to_gif(self,
-               targetpath: str = None,
-               delay: float = 1.33,
-               sort: bool = False,
-               clean: bool = False,
-               ext: str = 'png',
-               ):
-        if not targetpath:
-            targetpath = self.plot_directory
-        filelist = [f for f in os.listdir(targetpath)
-                    if isfile(join(targetpath, f))
-                    and f.endswith(ext)]
+        self.temp = PlotSetup(base_folder=self.dir_format.directory, label='frames')
+        self.fig_size = fig_size
+        self.x_axis = 'Horizontal Node Location'
+        self.y_axis = 'Vertical Node Location'
+        self.title = self.make_title()
+        self.resolution = 24
+
+        self.shape = self.config["sqrt_nodes"], self.config["sqrt_nodes"]
+        self.x = None
+        self.y = None
+        self.color_scale = None
+        self.prep_space()
+
+    def animate(self, oscillator_states, times, cleanup=True):
+        """Create an animation of the evolution of oscillator phases over time"""
+        self.plot_frames(oscillator_states, times)
+        self.to_gif()
+        if cleanup:
+            self.cleanup()
+
+    def plot_frames(self, oscillator_states, times):
+        """Plot the phases of all oscillators through time"""
+        for k in np.arange(oscillator_states.shape[2]):
+            oscillators_now = oscillator_states[..., k]
+            self.plot_frame(oscillators_now, times[k])
+
+    def plot_frame(self, raw_phases, t):
+        """Plot all the oscillator phases mapped onto abs((-pi, pi]) at a single point in time"""
+        phases = np.abs(np.mod(raw_phases, 2 * np.pi) - np.pi).ravel()
+
+        fig = plt.figure(figsize=self.fig_size)
+        ax = fig.add_subplot(111)
+        plt.tricontourf(
+            self.x, self.y, phases,
+            self.color_scale,
+            cmap=plt.cm.nipy_spectral,
+        )
+        self.format_frame(ax)
+
+        title = self.this_title(t)
+        plt.title(title)
+        plt.xlabel(self.x_axis)
+        plt.ylabel(self.y_axis)
+
+        plt.grid(b=None, which='major', axis='both')
+        fig.savefig(self.temp.file_name(f'Phases_at_t={t:.2f}', 'png'))
+        plt.close('all')
+
+    def to_gif(self, sort: bool = False, ext: str = 'png'):
+        """Convert all the .png images in this dir into a gif, sorting by timestamp if requested"""
+        file_list = [
+            f for f in os.listdir(self.temp.directory)
+            if isfile(join(self.temp.directory, f)) and f.endswith(ext)
+        ]
 
         if sort:
-            # index = lambda x: re.search('\.\d_',str(x)).group()
-            s = lambda x: re.split(r'\d*\.*\d*_',str(x),1)   # t = 1.4_20200505... & 15_2020..
-            index = np.array([s(file) for file in filelist],dtype=str)
-            if len(index.shape)==1:
+            s = lambda x: re.split(r'\d*\.*\d*_', str(x), 1)   # t = 1.4_20200505... & 15_2020..
+            index = np.array([s(file) for file in file_list], dtype=str)
+            if len(index.shape) == 1:
                 print('err 1D arry')
                 return False
 
-            files = np.array([index[...,-1],filelist],dtype=str).T
-            files = files[files[...,0].argsort()]
-            filelist = list(files[:,1])
-            # print(filelist)
-        img = lambda f: imageio.imread(os.path.join(targetpath, f))
-        images = list(map(img, filelist))
+            files = np.array([index[..., -1], file_list], dtype=str).T
+            files = files[files[..., 0].argsort()]
+            file_list = list(files[:, 1])
 
-        # print('***',targetpath.name)
-        self.img_name = self.fmt.plot_name(targetpath,'gif')
-        # print(self.img_name)
-        imageio.mimsave(self.img_name, images, duration=delay)
+        images = list(map(
+            lambda f: imageio.imread(os.path.join(self.temp.directory, f)),
+            file_list
+        ))
+        gif_name = self.dir_format.file_name('animation', 'gif')
+        imageio.mimsave(gif_name, images, duration=self.config['frame_rate'])
 
-        if clean:
-            self.cleanup(targetpath)
+    def cleanup(self):
+        """Remove the contents of the temp directory (individual frames of the phase evolution gif)"""
+        target_path = self.temp.directory
 
-    def cleanup(self, targetpath:str = None):
-
-        for filename in os.listdir(targetpath):
-            file_path = os.path.join(targetpath, filename)
+        for filename in os.listdir(target_path):
+            file_path = os.path.join(target_path, filename)
             try:
                 if os.path.isfile(file_path) or os.path.islink(file_path):
                     os.unlink(file_path)
@@ -91,13 +133,50 @@ class Animate(object):
                 return False
 
         try:
-            os.rmdir(targetpath)
+            os.rmdir(target_path)
 
         except OSError as err:
             print(err)
             return False
         return True
 
+    def prep_space(self):
+        # want to keep this dependence on init setup may also use z.shape[]
+        x = np.linspace(0, self.shape[0], self.shape[1])
+        y = np.linspace(0, self.shape[1], self.shape[0])
+
+        x, y = np.meshgrid(x, y, sparse=False)
+        self.x, self.y = x.ravel(), y.ravel()
+        self.color_scale = np.linspace(0, np.pi, self.resolution, endpoint=True)
+
+    def make_title(self):
+        kn = self.config['gain_ratio']
+        r = self.config['system']['interaction']['r']
+        beta = self.config['system']['interaction']['beta']
+        s = self.config['system']['kernel']['s']
+        return f'R={r:.2f} $\\beta$={beta:.2f} K/N={kn:.0f} & s={s:.0f}'
+
+    def this_title(self, t):
+        title = deepcopy(self.title)
+        if t > 10:
+            title += f' at t = {t:.0f}'
+        else:
+            title += f' at t = {t:2.1f}'
+        return title
+
+    def format_frame(self, ax: plt.Axes):
+        plt.gca().invert_yaxis()
+        plt.grid(b=True, which='major', axis='both')
+
+        plt.clim(self.color_scale[0], self.color_scale[-1])
+
+        plt.colorbar(ticks=self.color_scale[::-1][::5], format='%1.2f')
+
+        ax.yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}'))
+        ax.xaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}'))
+        ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator(base=self.shape[0]/4))
+        ax.yaxis.set_major_locator(mpl.ticker.MultipleLocator(base=self.shape[1]/4))
+        # plt.tight_layout()
 
 # TODO enable zip img
     #     try:

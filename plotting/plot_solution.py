@@ -13,24 +13,15 @@ np.set_printoptions(precision=3, suppress=True)
 from scipy.interpolate import RectBivariateSpline
 
 
-def save_data(data: np.ndarray, file_name: str = 'model_data'):
-    print(file_name)
-    fmt = PlotSetup(file_name)
-    np.save(fmt.plot_name(file_name, 'npy'), data)
-
-
-def plot_output(model, osc,
-                data: np.ndarray,
+def plot_output(data: np.ndarray,
                 time: np.ndarray,
                 samples: int = 4,
                 seconds: int = 4,
                 scale: bool = False,
                 file_name: str = 'model_data'):
 
-    # print(data.shape)
     for k in np.arange(data.shape[2]):
-        data_here = data[...,k]
-        model.plot_contour(osc, data[...,k], time[k],)
+        plot_contour(data[...,k], time[k],)
 
         if samples and np.round(100*time[k])%100==0 and not time[k]==time[-1]:
             print(np.round(time[k]))
@@ -38,20 +29,15 @@ def plot_output(model, osc,
             idy=np.where(time<time[k]+seconds)[0]
             idz = idx[np.in1d(idx, idy)]  # intersection of sets
 
-            model.plot_timeseries(osc,
-                                  data[...,idz],
-                                  time[idz],
-                                  samples,
-                                  seconds)
+            plot_timeseries(data[..., idz], time[idz], samples, seconds)
 
 ################################################################################
 
 
-def plot_timeseries(osc,
-                    z:np.ndarray,
-                    t:np.ndarray,
-                    samples:int=3,
-                    seconds:int = 2,
+def plot_timeseries(z: np.ndarray,
+                    t:  np.ndarray,
+                    samples: int = 3,
+                    seconds: int = 2,
                     title:str = None,
                     y_axis:str = '$\cos(\omega*t)$',
                     x_axis:str = 'time, s',
