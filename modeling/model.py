@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.integrate import solve_ivp
+from matplotlib import pyplot as plt
 
 from modeling.cortical_sheet import OscillatorArray
 from modeling.wavelet import wavelet, constant
@@ -87,3 +88,52 @@ class KuramotoSystem(object):
     def external_input_fn(self, t:float):  # ,w:float):
         # cos(w*t)
         return 0
+
+
+def plot_interaction():
+    ratio = 0.5
+    size = 90
+    s = 2
+    width = 40
+    r = 0,
+    beta = 0
+    deltas = np.linspace(-np.pi, np.pi, 100)
+    dists = np.linspace(-size/2, size/2, size+1)
+
+    interact = Interaction((size, size), r=r, beta=beta)
+    diff_part = interact.gamma(deltas)
+
+    wave_part = wavelet(dists, s=s, width=width)
+
+    interaction = np.zeros((len(diff_part), len(wave_part)))
+
+    for i in range(len(diff_part)):
+        for j in range(len(wave_part)):
+            interaction[i, j] = ratio * diff_part[i] * wave_part[j]
+
+    deltas, dists = np.meshgrid(deltas, dists)
+
+    plt.figure()
+    plt.pcolormesh(deltas.T, dists.T, interaction, cmap='coolwarm', shading='gouraud')
+    plt.title(f'Interaction term')
+    plt.xlabel('Phase Difference')
+    plt.ylabel('Node Distance')
+
+    # Tomek: apparently I don't understand how tricontourf works...
+    # deltas = deltas.ravel()
+    # dists = dists.ravel()
+    # interacts = interaction.ravel()
+    # plt.figure()
+    # plt.tricontourf(
+    #     dists, deltas,  interacts,
+    #     cmap=plt.cm.get_cmap('coolwarm'),
+    # )
+    # plt.colorbar()
+    # plt.xlabel('Phase Difference')
+    # plt.ylabel('Node Distance')
+
+    plt.show()
+
+
+if __name__ == "__main__":
+    plot_interaction()

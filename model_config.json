@@ -104,8 +104,8 @@
     "inspect_t_seconds": 0.35,
     "inspect_t_samples": 3,
 
-    "sqrt_nodes": 100,
-    "time": 10,
+    "sqrt_nodes": 90,
+    "time": 5,
 
     "system": {
       "initial": {
@@ -118,7 +118,7 @@
         "r":0
       },
       "kernel" : {
-        "s":3,
+        "s":2,
         "width": 40
       },
       "normalize_kernel": false,
@@ -132,7 +132,7 @@
         "driver_weight":0
       }
     },
-    "gain_ratio": 0.5,
+    "gain_ratio": 0.25,
 
     "external_input":false,
     "external_input_weight":0
