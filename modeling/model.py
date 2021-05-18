@@ -54,7 +54,8 @@ class KuramotoSystem(object):
 
         msg = f't_step: {np.round(t, 4)}'
         if t - np.mean(self.recent_ts) < 1e-6:
-            msg += f'Small timestep. dx stats are: mean {np.mean(dx)} stdev {np.std(dx)} min {np.min(dx)} max {np.max(dx)}'
+            msg += f' --  Small time step! dx stats are: ' \
+                   f'mean {np.mean(dx):.6f} stdev {np.std(dx):.6f} min {np.min(dx):.6f} max {np.max(dx):.6f}'
         self.recent_ts = np.roll(self.recent_ts, 1)
         self.recent_ts[0] = t
 
