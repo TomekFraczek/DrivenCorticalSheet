@@ -18,7 +18,7 @@ class KuramotoSystem(object):
 
         self.osc = OscillatorArray(array_size, system_params, gain)
 
-        self.wavelet = constant(self.osc.distance.ravel(), **self.kernel_params)
+        self.wavelet = wavelet(self.osc.distance.ravel(), **self.kernel_params)
 
         self.interaction = Interaction(self.osc.ic.shape, **self.interaction_params)
         self.external_input = external_input
