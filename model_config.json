@@ -104,7 +104,7 @@
     "inspect_t_seconds": 0.35,
     "inspect_t_samples": 3,
 
-    "sqrt_nodes": 50,
+    "sqrt_nodes": 100,
     "time": 10,
 
     "system": {
@@ -132,7 +132,7 @@
         "driver_weight":0
       }
     },
-    "gain_ratio": 1,
+    "gain_ratio": 0.5,
 
     "external_input":false,
     "external_input_weight":0
