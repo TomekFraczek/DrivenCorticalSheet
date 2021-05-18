@@ -102,7 +102,7 @@ def plot_existing_interaction(deltas, dists, system, out_fmt=None):
 
     deltas, dists = np.meshgrid(deltas, dists)
 
-    plt.figure()
+    plt.figure(figsize=(10, 8))
     plt.pcolormesh(deltas.T, dists.T, interaction, cmap='coolwarm', shading='gouraud')
     plt.colorbar()
     plt.title(f'Interaction term -- '
