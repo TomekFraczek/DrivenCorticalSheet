@@ -6,7 +6,7 @@ import numpy as np
 
 from logger import Logger
 from pathlib import Path
-from modeling.model import KuramotoSystem
+from modeling.model import KuramotoSystem, plot_interaction
 from plotting.animate import Animator
 from plotting.plot_solution import PlotSetup
 
@@ -120,6 +120,7 @@ def run(config_set: str = 'local_sync', config_file: str = 'model_config.json', 
     oscillator_state, time, path_fmt = model(config, path_fmt)
     if do_plot:
         plot(config=config, osc_states=oscillator_state, time=time, fmt=path_fmt)
+    plot_interaction(config['sqrt_nodes'], config['system'], config['gain_ratio'], out_fmt=path_fmt)
 
 
 def main():
