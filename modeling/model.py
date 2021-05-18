@@ -1,9 +1,11 @@
+import json
+
 import numpy as np
 from scipy.integrate import solve_ivp
 from matplotlib import pyplot as plt
 
 from modeling.cortical_sheet import OscillatorArray
-from modeling.wavelet import wavelet, constant
+from modeling.wavelet import make_kernel
 from modeling.interaction import Interaction
 
 np.set_printoptions(precision=3, suppress=True)
@@ -13,22 +15,22 @@ class KuramotoSystem(object):
     def __init__(self, array_size, system_params, gain,
                  external_input: bool = False, input_weight: float = 0, ):
 
+        print('Initializing model...')
         self.gain = gain
         self.kernel_params = system_params['kernel']
         self.interaction_params = system_params['interaction']
 
         self.osc = OscillatorArray(array_size, system_params, gain)
 
-        self.wavelet = constant(self.osc.distance.ravel(), **self.kernel_params)
+        self.wavelet_func = make_kernel('wavelet', **self.kernel_params)
+        self.wavelet = self.wavelet_func(self.osc.distance.ravel())
 
         self.interaction = Interaction(self.osc.ic.shape, **self.interaction_params)
         self.external_input = external_input
         self.input_weight = input_weight
+        print('System ready!')
 
-    def differential_equation(self,
-                              t:float,
-                              x:np.ndarray,
-                              ):
+    def differential_equation(self, t: float, x: np.ndarray, ):
         """ of the form: xi - 'k/n * sum_all(x0:x_N)*fn_of_dist(xi - x_j) * sin(xj - xi))'
         """
 
@@ -72,9 +74,6 @@ class KuramotoSystem(object):
         else:
             x0 = np.zeros(np.prod(self.osc.ic.shape))
 
-        """
-        option to vectorize but need to change downstream, keep false
-        """
         return solve_ivp(fn,
                          time_scale,
                          x0,
@@ -90,51 +89,60 @@ class KuramotoSystem(object):
         return 0
 
 
-def plot_interaction():
-    ratio = 0.5
-    size = 90
-    s = 2
-    width = 40
-    r = 0,
-    beta = 0
+def plot_interaction(size, sys_params, gain_ratio=1, out_fmt=None):
     deltas = np.linspace(-np.pi, np.pi, 100)
     dists = np.linspace(-size/2, size/2, size+1)
 
-    interact = Interaction((size, size), r=r, beta=beta)
-    diff_part = interact.gamma(deltas)
+    system = KuramotoSystem((size, size), sys_params, gain_ratio)
 
-    wave_part = wavelet(dists, s=s, width=width)
+    diff_part = system.interaction.gamma(deltas)
+    wave_part = system.wavelet_func(dists)
 
     interaction = np.zeros((len(diff_part), len(wave_part)))
 
     for i in range(len(diff_part)):
         for j in range(len(wave_part)):
-            interaction[i, j] = ratio * diff_part[i] * wave_part[j]
+            interaction[i, j] = gain_ratio * diff_part[i] * wave_part[j]
 
     deltas, dists = np.meshgrid(deltas, dists)
 
     plt.figure()
     plt.pcolormesh(deltas.T, dists.T, interaction, cmap='coolwarm', shading='gouraud')
     plt.colorbar()
-    plt.title(f'Interaction term: [r={r}, $\\beta$={beta}], [s={s}, width={width}] ')
+    plt.title(f'Interaction term -- '
+              f'  Gamma: {json.dumps(system.interaction_params)}'
+              f'  Kernel: {json.dumps(system.kernel_params)} ')
     plt.xlabel('Phase Difference')
     plt.ylabel('Node Distance')
 
-    # Tomek: apparently I don't understand how tricontourf works...
-    # deltas = deltas.ravel()
-    # dists = dists.ravel()
-    # interacts = interaction.ravel()
-    # plt.figure()
-    # plt.tricontourf(
-    #     dists, deltas,  interacts,
-    #     cmap=plt.cm.get_cmap('coolwarm'),
-    # )
-    # plt.colorbar()
-    # plt.xlabel('Phase Difference')
-    # plt.ylabel('Node Distance')
-
-    plt.show()
+    if out_fmt is None:
+        plt.show()
+    else:
+        plt.savefig(out_fmt.file_name('interaction', 'png'))
 
 
 if __name__ == "__main__":
-    plot_interaction()
+
+    plot_interaction(
+        100,
+        {
+            "interaction": {
+                "beta": 0,
+                "r": 0
+            },
+            "kernel": {
+                "s": 2,
+                "width": 40
+            },
+            "initial": {
+                "type": "uniform",
+                "low": 0,
+                "high": 6.28318
+            },
+            "natural_freq": {
+                "a": 1,
+                "b": 0,
+                "c": 0.4
+            },
+        }
+    )

@@ -10,7 +10,16 @@ from matplotlib import pyplot as plt
 from math import exp
 
 
-def constant(x, **params):
+def make_kernel(kernel_type, **params):
+    if kernel_type == "constant":
+        return constant
+    elif kernel_type == "wavelet":
+        def func(x):
+            return wavelet(x, **params)
+        return func
+
+
+def constant(x):
     return np.ones(shape=x.shape)
 
 
