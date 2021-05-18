@@ -146,7 +146,7 @@ class Animator(object):
         r = self.config['system']['interaction']['r']
         beta = self.config['system']['interaction']['beta']
         s = self.config['system']['kernel']['s']
-        return f'R={r:.2f} $\\beta$={beta:.2f} K/N={kn:.0f} & s={s:.0f}'
+        return f'R={r:.2f} $\\beta$={beta:.2f} K/N={kn:.2f} & s={s:.2f}'
 
     def this_title(self, t):
         title = deepcopy(self.title)
