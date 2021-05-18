@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-make gif from select folder
+make gif from selected folder
 credit to https://github.com/dm20/gif-maker
 """
-# from tkinter import filedialog
 import imageio
 import os
-import sys
 import re
 import shutil
 import numpy as np
@@ -15,26 +13,18 @@ from os.path import isfile, join
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import StrMethodFormatter
-
-from pathlib import Path
-sys.path.append(Path(__file__).resolve().parents[1])
-if __name__ == '__main__' and __package__ is None:
-    __package__ = 'kurosc'
-
 from plotting.plotformat import PlotSetup
 
 
-"""
-gif_maker many thanks
-https://stackoverflow.com/questions/753190/programmatically-generate-video-or-animated-gif-in-python
-fp_in = "/path/to/image_*.png"
-fp_out = "/path/to/image.gif"
-
-# https://pillow.readthedocs.io/en/stable/handbook/image-file-formats.html#gif
-img, *imgs = [Image.open(f) for f in sorted(glob.glob(fp_in))]
-img.save(fp=fp_out, format='GIF', append_images=imgs,
-         save_all=True, duration=200, loop=0)
-"""
+# gif_maker many thanks
+# https://stackoverflow.com/questions/753190/programmatically-generate-video-or-animated-gif-in-python
+# fp_in = "/path/to/image_*.png"
+# fp_out = "/path/to/image.gif"
+#
+# # https://pillow.readthedocs.io/en/stable/handbook/image-file-formats.html#gif
+# img, *imgs = [Image.open(f) for f in sorted(glob.glob(fp_in))]
+# img.save(fp=fp_out, format='GIF', append_images=imgs,
+#          save_all=True, duration=200, loop=0)
 
 
 class Animator(object):

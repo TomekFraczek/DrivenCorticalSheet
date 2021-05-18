@@ -1,17 +1,12 @@
 """
-construct 2d array of pase state
+construct 2d array of phase state
 distance array
 
 """
-import sys
-from pathlib import Path
-sys.path.append(Path(__file__).resolve().parents[1])
-if __name__ == '__main__' and __package__ is None:
-    __package__ = 'kurosc'
 
 import numpy as np
 from plotting.plot_solution import plot_phase
-from wavelet import gaussian, gauss_width
+from modeling.wavelet import gaussian, gauss_width
 
 
 class OscillatorArray(object):

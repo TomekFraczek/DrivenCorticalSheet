@@ -4,15 +4,6 @@ interaction is class, gamma is function, delta function
 
 if need to run in here pull in plotting folder to dir
 """
-import sys
-import os
-# sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-
-from pathlib import Path
-sys.path.append(Path(__file__).resolve().parents[1])
-if __name__ == '__main__' and __package__ is None:
-    __package__ = 'kurosc'
-
 from plotting.plotformat import PlotSetup
 
 import numpy as np
@@ -36,8 +27,8 @@ class Interaction(object):
                       self.dimension[1]*self.dimension[0]])
 
         # TODO validate this index assignment with ravel()
-        for (k,p) in enumerate(phase_array):
-            d[k,:] = np.array((phase_array - p), dtype=float)
+        for (k, p) in enumerate(phase_array):
+            d[k, :] = np.array((phase_array - p), dtype=float)
 
         # The above should be logically equivalent to the below
         # k=0
@@ -54,15 +45,15 @@ class Interaction(object):
 
     def plot_phase(self,
                    X: np.ndarray,
-                   plot_title:str = 'placeholder',
-                   y_axis:str = 'y',
-                   x_axis:str = 'x',
+                   plot_title: str = 'placeholder',
+                   y_axis: str = 'y',
+                   x_axis: str = 'x',
                    ):
         fmt = PlotSetup(plot_title)  # plotting format obj
-        fig = plt.figure(figsize=(9,9))
+        fig = plt.figure(figsize=(9, 9))
         ax = fig.add_subplot(111)
-        ax.plot(X[...,0]/np.pi,X[...,1],'-b')
-        ax.plot(np.asarray([X[0,0],X[-1,0]])/np.pi,[0,0],'-k',linewidth=1)  #
+        ax.plot(X[..., 0]/np.pi, X[..., 1],'-b')
+        ax.plot(np.asarray([X[0, 0], X[-1, 0]])/np.pi, [0, 0], '-k', linewidth=1)
 
         plt.title(plot_title)
         plt.xlabel(x_axis)

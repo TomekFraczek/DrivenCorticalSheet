@@ -1,6 +1,3 @@
-"""takes select soscillatorArray: "osc" instance from model.py and constructs plot
-"""
-
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import StrMethodFormatter

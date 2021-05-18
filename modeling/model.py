@@ -1,21 +1,11 @@
-import sys
-from scipy.integrate import solve_ivp
-from datetime import datetime as dt
-
 import numpy as np
+from scipy.integrate import solve_ivp
+
+from modeling.cortical_sheet import OscillatorArray
+from modeling.wavelet import wavelet, constant
+from modeling.interaction import Interaction
+
 np.set_printoptions(precision=3, suppress=True)
-
-
-from pathlib import Path
-sys.path.append(Path(__file__).resolve().parents[1])
-if __name__ == '__main__' and __package__ is None:
-    __package__ = 'kurosc'
-
-from cortical_sheet import OscillatorArray
-from wavelet import wavelet, constant
-from interaction import Interaction
-from plotting.plot_solution import (plot_contour,
-                                    plot_timeseries)
 
 
 class KuramotoSystem(object):
@@ -31,8 +21,6 @@ class KuramotoSystem(object):
         self.wavelet = constant(self.osc.distance.ravel(), **self.kernel_params)
 
         self.interaction = Interaction(self.osc.ic.shape, **self.interaction_params)
-        self.plot_contour = plot_contour
-        self.plot_timeseries = plot_timeseries
         self.external_input = external_input
         self.input_weight = input_weight
 
@@ -99,84 +87,3 @@ class KuramotoSystem(object):
     def external_input_fn(self, t:float):  # ,w:float):
         # cos(w*t)
         return 0
-
-
-###############################################################################
-## unit tests may need update below but not called into model
-###############################################################################
-def test_case():
-    #initialize an osc array
-    dimension = (2,2)
-    domain = (0,np.pi)
-    osc = OscillatorArray(dimension, domain)
-
-    # fixed time wavelet kernel
-    kernel_params = {'a': 10000/3*2,
-                     'b': 0,
-                     'c': 10,
-                     'order': 4,
-                     }
-    interaction_params = ({'beta': 0, 'r':0},
-                          {'beta': 0.25, 'r':0.95})
-
-    w = wavelet(osc.distance.ravel(), **kernel_params)
-
-    # test case using initial conditions
-    a = Interaction(osc.ic.shape, **interaction_params[0])
-    phase_difference = a.delta(osc.ic)
-    g = a.gamma(phase_difference)
-
-    print(dt.now(),
-          '\nwavelet\n',
-          w,'\n',type(w),
-          '\n\nphase difference vector\n',
-          g.ravel(),'\n',
-          type(g.ravel()),
-          '\nwavelet*difference\n',
-          (w*g.ravel()).shape
-          )
-
-
-
-
-def run():
-    nodes = 128
-    time =  10
-    kernel_params = {'a': 10000/3*2,
-                     'b': 0,
-                     'c': 1,
-                     'order': 4,
-                     }
-    interaction_params = ({'beta': 0, 'r':0},
-                          {'beta': 0.25, 'r':0.95}
-                          )
-
-    kuramoto = KuramotoSystem((nodes,nodes),
-                                kernel_params,
-                                interaction_params[0]
-                                )
-    solution = kuramoto.solve((0,time))
-    """
-    python -c "import numpy as np;
-    a=np.array([[[2,3],[1,4]],[[0,1],[1,0]],[[6,7],[4,5]]]);
-    b = a.flatten(); print(b);
-    print(a,a.shape,'\n\n',b.reshape(3,2,2))"
-    """
-    osc_state = solution.y.reshape((solution.t.shape[0],nodes,nodes))%np.pi
-    print(solution.y.shape, solution.t.shape)
-    # print(osc_state[0])
-    kuramoto.plot_solution(osc_state[-1],solution.t[-1])
-
-if __name__ == '__main__':
-    # test_case()
-    run()
-
-
-    """
-    system of m*n indep variables subject to constraints:
-    x - xij for all other ij to feed into sin (phase diff)
-    w(m,n) for all other ij distances calculate once
-    w(m,n) is distance dependent scalar but may be calculated more than once
-    idea to evolve w(m,n) kernel function with time or provide feedback just for fun
-    as if derivative power (n) or breadth of wave (a,c) or strength is modulated with system state
-    """
