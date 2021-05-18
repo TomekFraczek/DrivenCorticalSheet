@@ -59,9 +59,9 @@ class OscillatorArray(object):
         rng = np.random.default_rng()
         frequency = rng.choice(x, size=np.prod(self.ic.shape), p=prob, replace=True)
 
-        print(f'    natural frequency stats in hz:'
-              f'        mean: {np.round(np.mean(frequency),3)}'
-              f'        st dev: {np.round(np.std(frequency),3)}'
+        print(f'    natural frequency stats in hz:\n'
+              f'        mean: {np.round(np.mean(frequency),3)}\n'
+              f'        st dev: {np.round(np.std(frequency),3)}\n'
               f'    converted to phase angle on output')
         return frequency*np.pi*2
 
