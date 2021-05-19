@@ -33,7 +33,7 @@ class KuramotoSystem(object):
         print('System ready!')
 
     def differential_equation(self, t: float, x: np.ndarray, ):
-        """ of the form: xi - 'k/n * sum_all(x0:x_N)*fn_of_dist(xi - x_j) * sin(xj - xi))'
+        """ of the form: wi - 'k/n * sum_all(x0:x_N)*fn_of_dist(xi - x_j) * sin(xj - xi))'
         """
 
         K = self.gain
