@@ -133,20 +133,25 @@ def run(config_set: str = 'local_sync', config_file: str = 'model_config.json', 
         plot(config=config, osc_states=oscillator_state, time=time, fmt=path_fmt)
 
 
-def sweep(var_name, start, stop, steps, config_set, n_jobs=-2,
-          config_file: str = 'model_config.json', base_path='plots'):
+def sweep(var_name, start, stop, steps, n_jobs=-2,
+          config_set='gain_sweep', config_file: str = 'model_config.json', base_path='plots'):
     with open(Path(config_file).resolve()) as f:
         var = json.load(f)
     base_config = var[config_set]
     conf_str = json.dumps(base_config)
 
-    base_fmt = PlotSetup(label=f'{config_set}_sweep')
+    var_key = '"<sweep-var>"'
+    if var_key not in conf_str:
+        raise KeyError('The swept config set must have the target variable replaced by \'"<sweep-var>"\'')
+
+    base_fmt = PlotSetup(base_folder=base_path, label=f'{config_set}_sweep')
 
     var_values = np.linspace(start, stop, steps)
     all_configs = []
     file_fmts = []
     for value in var_values:
-        config = json.loads(conf_str.replace('<sweep_var>', f'{value}'))
+        str_here = conf_str.replace(var_key, str(round(value, 4)))
+        config = json.loads(str_here)
         fmt = PlotSetup(base_folder=base_fmt.directory, label=f'{var_name}={value:.2f}')
 
         all_configs.append(config)
