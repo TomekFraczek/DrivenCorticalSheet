@@ -1,0 +1,5 @@
+The solver successfully reached the end of the integration interval.
+
+Code used for this run:
+    git url: b'https://github.com/TomekFraczek/DrivenCorticalSheet.git'
+    commit hash: b'2645f00'

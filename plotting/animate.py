@@ -48,7 +48,7 @@ class Animator(object):
     def animate(self, oscillator_states, times, cleanup=True):
         """Create an animation of the evolution of oscillator phases over time"""
         self.plot_frames(oscillator_states, times)
-        self.to_gif()
+        self.to_gif(True)
         if cleanup:
             self.cleanup()
 
@@ -189,4 +189,3 @@ class Animator(object):
     #         # os.rmdir(archive, *, dir_fd=None)
     #     except:
     #         print(f'error zipping images, make sure to clean {targetpath.stem} up before running agin :)')
-
