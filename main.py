@@ -1,3 +1,4 @@
+import os
 import json
 import argparse
 import sys
@@ -6,6 +7,7 @@ import numpy as np
 
 from logger import Logger
 from pathlib import Path
+from joblib import Parallel, delayed
 from modeling.model import KuramotoSystem, plot_interaction
 from plotting.animate import Animator
 from plotting.plot_solution import PlotSetup
@@ -129,6 +131,31 @@ def run(config_set: str = 'local_sync', config_file: str = 'model_config.json', 
     oscillator_state, time, path_fmt = model(config, path_fmt)
     if do_plot:
         plot(config=config, osc_states=oscillator_state, time=time, fmt=path_fmt)
+
+
+def sweep(var_name, start, stop, steps, config_set, n_jobs=-2,
+          config_file: str = 'model_config.json', base_path='plots'):
+    with open(Path(config_file).resolve()) as f:
+        var = json.load(f)
+    base_config = var[config_set]
+    conf_str = json.dumps(base_config)
+
+    base_fmt = PlotSetup(label=f'{config_set}_sweep')
+
+    var_values = np.linspace(start, stop, steps)
+    all_configs = []
+    file_fmts = []
+    for value in var_values:
+        config = json.loads(conf_str.replace('<sweep_var>', f'{value}'))
+        fmt = PlotSetup(base_folder=base_fmt.directory, label=f'{var_name}={value:.2f}')
+
+        all_configs.append(config)
+        file_fmts.append(fmt)
+
+    Parallel(n_jobs=n_jobs, verbose=20)(
+        delayed(model)(all_configs[i], file_fmts[i])
+        for i in range(len(all_configs))
+    )
 
 
 def main():
