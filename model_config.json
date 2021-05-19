@@ -132,7 +132,7 @@
         "driver_weight":0
       }
     },
-    "gain_ratio": 0.1,
+    "gain_ratio": 2,
 
     "external_input":false,
     "external_input_weight":0
