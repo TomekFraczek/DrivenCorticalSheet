@@ -146,7 +146,7 @@ def sweep(var_name, start, stop, steps, n_jobs=-2,
 
     base_fmt = PlotSetup(base_folder=base_path, label=f'{config_set}_sweep')
 
-    var_values = np.linspace(start, stop, steps)
+    var_values = np.linspace(start, stop, steps, endpoint=True)
     all_configs = []
     file_fmts = []
     for value in var_values:
@@ -185,8 +185,39 @@ def main():
     parser.add_argument('--plot', action='store_true',
                         help='Whether to plot the results right away')
 
+    parser.add_argument('--sweep', action='store_true',
+                        help='Whether to plot the results right away')
+
+    parser.add_argument('--var', metavar='variable',
+                        type=str, nargs='?',
+                        help='Name of variable being swept',
+                        default='Var')
+
+    parser.add_argument('--start', metavar='sweep start',
+                        type=float, nargs='?',
+                        help='Start value of the sweep variable',
+                        default=0.0)
+
+    parser.add_argument('--stop', metavar='sweep stop',
+                        type=float, nargs='?',
+                        help='End value of the sweep variable, included',
+                        default=1.0)
+
+    parser.add_argument('--steps', metavar='num steps',
+                        type=int, nargs='?',
+                        help='Number of steps in the sweep',
+                        default=10)
+
+    parser.add_argument('--jobs', metavar='num jobs',
+                        type=int, nargs='?',
+                        help='Number of parallel jobs to run',
+                        default=-2)
+
     args = parser.parse_args()
-    run(args.set, args.path, do_plot=args.plot)
+    if args.sweep:
+        sweep(args.var, args.start, args.stop, args.steps, args.jobs, args.set, args.path, args.out)
+    else:
+        run(args.set, args.path, base_path=args.out, do_plot=args.plot)
 
 
 if __name__ == '__main__':
