@@ -14,7 +14,7 @@ class OscillatorArray(object):
         self.init_params = system_params['initial']
         self.freq_params = system_params['natural_freq']
 
-        self.ic = self.prep_initial_conditions(*dimension)
+        self.ic = np.linspace(0, 2 * np.pi, dimension[0] * dimension[1]).reshape(dimension)  # self.prep_initial_conditions(*dimension)
         # Useful debug initital conditions that neatly increase over the whole space
         #     np.linspace(0, 2 * np.pi, dimension[0] * dimension[1]).reshape(dimension)
 
@@ -68,18 +68,18 @@ class OscillatorArray(object):
     def prep_distance(self, t: str = 'float') -> np.ndarray:
 
         """construct m*n*(m*n) array of euclidian distance as integer or float
-           this could be optimized but is only called once as opposed to eth phase difference calc
+           this could be optimized but is only called once as opposed to the phase difference calc
         """
         d = np.zeros([self.ic.shape[0]*self.ic.shape[1],
                       self.ic.shape[1]*self.ic.shape[0]])
 
-        u,v = np.meshgrid(np.arange(self.ic.shape[0]),
+        u, v = np.meshgrid(np.arange(self.ic.shape[0]),
                           np.arange(self.ic.shape[1]),
                           sparse=False, indexing='xy')
         u = u.ravel()
         v = v.ravel()
-        z = np.array([u,v])
+        z = np.array([u, v])
 
-        for (k,x) in enumerate(z):
-            d[k,:] = np.array(np.sqrt((u - x[0])**2 + (v - x[1])**2),dtype=t)
+        for (k, x) in enumerate(z.T):
+            d[k, :] = np.array(np.sqrt((u - x[0])**2 + (v - x[1])**2), dtype=t)
         return d
