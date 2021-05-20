@@ -1,0 +1,113 @@
+Initializing model...
+Initializing (72, 72) oscillator array...
+    initial conditions (uniform) in phase space:
+         mean: 3.11
+        st dev: 1.812
+    natural frequency stats in hz:
+        mean: -0.002
+        st dev: 0.393
+    converted to phase angle on output
+System ready!
+t_step: 0.0
+t_step: 0.0
+t_step: 0.0
+t_step: 0.0
+t_step: 0.0
+t_step: 0.0012
+t_step: 0.0012
+t_step: 0.0023
+t_step: 0.0023
+t_step: 0.0035
+t_step: 0.0035
+t_step: 0.0098
+t_step: 0.0098
+t_step: 0.008
+t_step: 0.008
+t_step: 0.0126
+t_step: 0.0126
+t_step: 0.0116
+t_step: 0.0116
+t_step: 0.0152
+t_step: 0.0152
+t_step: 0.0188
+t_step: 0.0188
+t_step: 0.0224
+t_step: 0.0224
+t_step: 0.0296
+t_step: 0.0296
+t_step: 0.0368
+t_step: 0.0368
+t_step: 0.044
+t_step: 0.044
+t_step: 0.0512
+t_step: 0.0512
+t_step: 0.1222
+t_step: 0.1222
+t_step: 0.1932
+t_step: 0.1932
+t_step: 0.2642
+t_step: 0.2642
+t_step: 0.3352
+t_step: 0.3352
+t_step: 0.4273
+t_step: 0.4273
+t_step: 0.5195
+t_step: 0.5195
+t_step: 0.6117
+t_step: 0.6117
+t_step: 0.7038
+t_step: 0.7038
+t_step: 0.796
+t_step: 0.796
+t_step: 0.896
+t_step: 0.896
+t_step: 0.996
+t_step: 0.996
+t_step: 1.096
+t_step: 1.096
+t_step: 1.196
+t_step: 1.196
+t_step: 1.296
+t_step: 1.296
+t_step: 1.396
+t_step: 1.396
+t_step: 1.496
+t_step: 1.496
+t_step: 1.596
+t_step: 1.596
+t_step: 1.696
+t_step: 1.696
+t_step: 1.796
+t_step: 1.796
+t_step: 1.896
+t_step: 1.896
+t_step: 1.996
+t_step: 1.996
+t_step: 2.096
+t_step: 2.096
+t_step: 2.196
+t_step: 2.196
+t_step: 2.296
+t_step: 2.296
+t_step: 2.396
+t_step: 2.396
+t_step: 2.496
+t_step: 2.496
+t_step: 2.596
+t_step: 2.596
+t_step: 2.696
+t_step: 2.696
+t_step: 2.796
+t_step: 2.796
+t_step: 2.896
+t_step: 2.896
+t_step: 2.996
+t_step: 2.996
+t_step: 3.0
+t_step: 3.0
+Saving to plots/test_set_210519_22-41-36
+Ready to SAVE OUT to: plots/test_set_210519_22-41-36/frames
+Preparing frames...
+Stitching into a gif...
+Initializing model...
+System ready!

@@ -51,13 +51,13 @@
     "continuous_soln": true,
     "max_delta_t":0.1,
     "zero_ics": false,
-    "frames": 500,
+    "frames": 1000,
     "frame_rate": 0.33,
     "interpolate_plot": false,
     "inspect_t_seconds": 2,
     "inspect_t_samples": 3,
 
-    "sqrt_nodes": 32,
+    "sqrt_nodes": 72,
     "time": 3,
 
     "system": {
