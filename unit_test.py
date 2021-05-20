@@ -6,6 +6,7 @@ print(Path(__file__).resolve().parents[1])
 sys.path.append(Path(__file__).resolve().parents[1])
 
 import numpy as np
+np.set_printoptions(precision=2, suppress=True)
 from datetime import datetime as dt
 
 #TODO refactor useful ideas within, for instance distance test needs more input params now
@@ -15,8 +16,36 @@ def distance_test(m:int = 128,
                   ):
     from modeling.cortical_sheet import OscillatorArray
 
+    syst_params =  {
+                  "initial": {
+                    "type": "uniform",
+                    "low": 0,
+                    "high": 6.28318
+                  },
+                  "interaction" : {
+                    "beta":0,
+                    "r":0
+                  },
+                  "kernel" : {
+                    "s":0,
+                    "width":0
+                  },
+                  "normalize_kernel": False,
+                  "natural_freq" : {
+                    "a": 1,
+                    "b":0,
+                    "c":0.4
+                  },
+                  "driver": {
+                    "use_driver": False,
+                    "driver_weight":0
+                  }
+                }
+
+    gain_ratio = 5
+
     domain = (-np.pi,np.pi)
-    osc = OscillatorArray((m,n),domain)
+    osc = OscillatorArray((m,n),syst_params,gain_ratio)
 
     print(dt.now(),#.strftime('%y%m%d_%H%M%S'),
           '\nics\n',
@@ -29,95 +58,109 @@ def distance_test(m:int = 128,
     return osc.ic,osc.distance.flatten()
 
 def wavelet_test():
-    from spatialKernel.wavelet import kernel
+    from modeling.wavelet import make_kernel
 
     _,y = distance_test(3,3)
 
-    s = kernel()
-    params = {'a': 10000/3*2,
-              'b': 0,
-              'c': 10,
-              'order': 17,
-              }
-    w = s.wavelet(s.spatial_wavelet,y,*params.values(),True)
+
+    p = {
+      "s":2,
+      "width":2
+    }
+
+
+    s = make_kernel("wavelet",**p)
+
+
+    w = s(y)
     print(dt.now(),'\nwavelet\n',w)
 
 
 
 def decouple_test():
-    from secondOrderInteraction.decouple import interaction
+    from modeling.interaction import Interaction
+
+
+    p = {'beta': 0.25, 'r':0.95}
 
     x,_ = distance_test(3,3)
-    a = interaction(x.shape)
-    y = a.delta(x)
-    p = {'beta': 0.25, 'r':0.95}
-    g = a.gamma(y,**p)
+
+    a = Interaction(x.shape,**p)
+
+    y = a.delta(x.ravel())
+
+    g = a.gamma(y)
+
     print(dt.now(),'\ngamma\n',g,
           '\n\nphase difference vector\n',
-          g.flatten(),
+          y.flatten(),
           '\n\nmean difference vector\n',
-          np.mean(g))
+          np.mean(y))
+
     return g.flatten()
 
-def system():
-    #initialize an osc array
-    dimension = (2,2)
-    domain = (0,np.pi)
-    osc = oscillatorArray(dimension,domain)
 
-    # fixed time wavelet kernel
-    s = kernel()
-    kernel_params = {'a': 10000/3*2,
-                     'b': 0,
-                     'c': 10,
-                     'order': 4,
-                     }
-    interaction_params = ({'beta': 0, 'r':0},
-                          {'beta': 0.25, 'r':0.95})
-    w = s.wavelet(s.spatial_wavelet,
-                  osc.distance.flatten(),
-                  *kernel_params.values(),True)
-    # print(dt.now(),'\nwavelet\n',w)
-
-    a = interaction(osc.ic.shape)
-    phase_difference = a.delta(osc.ic)
-    g = a.gamma(phase_difference,**interaction_params[0])
-
-    print(dt.now(),
-          '\nwavelet\n',
-          w,'\n',type(w),
-          '\n\nphase difference vector\n',
-          g.flatten(),'\n',
-          type(g.flatten()),
-          '\nwavelet*difference\n',
-          w*g.flatten()
-          )
-
-def gif_test():
-    from lib.animate import animate
-    filepath = Path('/Users/Michael/Documents/GitHub/kuramoto-osc/Python/Oscillator Phase in 0_pi')
-    vid = animate(filepath)
-    vid.to_gif(filepath,0.75,True)
-
-
-
-def move_dirs():
-    from lib.plotformat import setup
-    fmt = setup('test_dir',3)
-    txt ='Oscillator Phase in pi'
-    print(txt)
-    print(fmt.plot_name(str(txt)))
-
-
-
-
-
-def load_j():
-    import json
-    f = open('model_config.json')
-    var = json.load(f)
-    [print(var['test_set0'][k]) for k,v in var['test_set0'].items()]
-
+"""
+#
+# def system():
+#     #initialize an osc array
+#     dimension = (2,2)
+#     domain = (0,np.pi)
+#     osc = oscillatorArray(dimension,domain)
+#
+#     # fixed time wavelet kernel
+#     s = kernel()
+#     kernel_params = {'a': 10000/3*2,
+#                      'b': 0,
+#                      'c': 10,
+#                      'order': 4,
+#                      }
+#     interaction_params = ({'beta': 0, 'r':0},
+#                           {'beta': 0.25, 'r':0.95})
+#     w = s.wavelet(s.spatial_wavelet,
+#                   osc.distance.flatten(),
+#                   *kernel_params.values(),True)
+#     # print(dt.now(),'\nwavelet\n',w)
+#
+#     a = interaction(osc.ic.shape)
+#     phase_difference = a.delta(osc.ic)
+#     g = a.gamma(phase_difference,**interaction_params[0])
+#
+#     print(dt.now(),
+#           '\nwavelet\n',
+#           w,'\n',type(w),
+#           '\n\nphase difference vector\n',
+#           g.flatten(),'\n',
+#           type(g.flatten()),
+#           '\nwavelet*difference\n',
+#           w*g.flatten()
+#           )
+#
+# def gif_test():
+#     from lib.animate import animate
+#     filepath = Path('/Users/Michael/Documents/GitHub/kuramoto-osc/Python/Oscillator Phase in 0_pi')
+#     vid = animate(filepath)
+#     vid.to_gif(filepath,0.75,True)
+#
+#
+#
+# def move_dirs():
+#     from lib.plotformat import setup
+#     fmt = setup('test_dir',3)
+#     txt ='Oscillator Phase in pi'
+#     print(txt)
+#     print(fmt.plot_name(str(txt)))
+#
+#
+#
+#
+#
+# def load_j():
+#     import json
+#     f = open('model_config.json')
+#     var = json.load(f)
+#     [print(var['test_set0'][k]) for k,v in var['test_set0'].items()]
+"""
 
 def index_ts():
     zshape = (24,24,500)
@@ -192,9 +235,9 @@ def plt_title():
     print(title)
 
 def main():
-    distance_test(3,3)
-    # wavelet_test()
-    # decouple_test()
+    # distance_test(3,3)
+    wavelet_test()
+    decouple_test()
     # gif_test()
     # normal_test()
     # move_dirs()
