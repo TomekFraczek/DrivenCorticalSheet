@@ -1,0 +1,125 @@
+Initializing model...
+Initializing (32, 32) oscillator array...
+    initial conditions (uniform) in phase space:
+         mean: 3.237
+        st dev: 1.858
+    natural frequency stats in hz:
+        mean: 0.029
+        st dev: 0.406
+    converted to phase angle on output
+System ready!
+t_step: 0.0
+t_step: 0.0
+t_step: 0.0
+t_step: 0.0
+t_step: 0.0
+t_step: 0.0031
+t_step: 0.0031
+t_step: 0.0061
+t_step: 0.0061
+t_step: 0.0092
+t_step: 0.0092
+t_step: 0.03
+t_step: 0.03
+t_step: 0.0507
+t_step: 0.0507
+t_step: 0.0715
+t_step: 0.0715
+t_step: 0.0923
+t_step: 0.0923
+t_step: 0.1433
+t_step: 0.1433
+t_step: 0.1943
+t_step: 0.1943
+t_step: 0.1805
+t_step: 0.1805
+t_step: 0.2177
+t_step: 0.2177
+t_step: 0.2549
+t_step: 0.2549
+t_step: 0.3076
+t_step: 0.3076
+t_step: 0.3604
+t_step: 0.3604
+t_step: 0.4131
+t_step: 0.4131
+t_step: 0.4658
+t_step: 0.4658
+t_step: 0.5407
+t_step: 0.5407
+t_step: 0.6155
+t_step: 0.6155
+t_step: 0.6903
+t_step: 0.6903
+t_step: 0.7651
+t_step: 0.7651
+t_step: 0.8399
+t_step: 0.8399
+t_step: 0.9399
+t_step: 0.9399
+t_step: 1.0399
+t_step: 1.0399
+t_step: 1.1399
+t_step: 1.1399
+t_step: 1.2399
+t_step: 1.2399
+t_step: 1.3399
+t_step: 1.3399
+t_step: 1.4399
+t_step: 1.4399
+t_step: 1.5399
+t_step: 1.5399
+t_step: 1.6399
+t_step: 1.6399
+t_step: 1.7399
+t_step: 1.7399
+t_step: 1.7152
+t_step: 1.7152
+t_step: 1.7904
+t_step: 1.7904
+t_step: 1.8656
+t_step: 1.8656
+t_step: 1.9409
+t_step: 1.9409
+t_step: 2.0254
+t_step: 2.0254
+t_step: 2.0053
+t_step: 2.0053
+t_step: 2.0697
+t_step: 2.0697
+t_step: 2.1341
+t_step: 2.1341
+t_step: 2.1986
+t_step: 2.1986
+t_step: 2.2986
+t_step: 2.2986
+t_step: 2.2692
+t_step: 2.2692
+t_step: 2.3397
+t_step: 2.3397
+t_step: 2.4103
+t_step: 2.4103
+t_step: 2.4809
+t_step: 2.4809
+t_step: 2.5809
+t_step: 2.5809
+t_step: 2.551
+t_step: 2.551
+t_step: 2.621
+t_step: 2.621
+t_step: 2.6911
+t_step: 2.6911
+t_step: 2.7611
+t_step: 2.7611
+t_step: 2.853
+t_step: 2.853
+t_step: 2.9449
+t_step: 2.9449
+t_step: 3.0
+t_step: 3.0
+Saving to plots/test_set_210519_22-35-12
+Ready to SAVE OUT to: plots/test_set_210519_22-35-12/frames
+Preparing frames...
+Stitching into a gif...
+Initializing model...
+System ready!
