@@ -3,6 +3,7 @@ construct wavelet for distance decay spatial kernel
 w = kernel(spatial_wavelet,x,*params.values(),True)
 returns a normalized gaussian nth order derivative
 """
+
 from plotting.plotformat import PlotSetup
 
 import numpy as np
@@ -70,7 +71,7 @@ def plot_wavelet(X: np.ndarray,
 
 
 def main():
-    distance = 200
+    distance = 40
     resolution = 1000
     x = np.linspace(-distance, distance, resolution)
     s = 3

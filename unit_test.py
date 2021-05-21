@@ -99,68 +99,138 @@ def decouple_test():
 
     return g.flatten()
 
+def wavelet_plot():
+    from modeling.wavelet import wavelet, plot_wavelet
 
-"""
-#
-# def system():
-#     #initialize an osc array
-#     dimension = (2,2)
-#     domain = (0,np.pi)
-#     osc = oscillatorArray(dimension,domain)
-#
-#     # fixed time wavelet kernel
-#     s = kernel()
-#     kernel_params = {'a': 10000/3*2,
-#                      'b': 0,
-#                      'c': 10,
-#                      'order': 4,
-#                      }
-#     interaction_params = ({'beta': 0, 'r':0},
-#                           {'beta': 0.25, 'r':0.95})
-#     w = s.wavelet(s.spatial_wavelet,
-#                   osc.distance.flatten(),
-#                   *kernel_params.values(),True)
-#     # print(dt.now(),'\nwavelet\n',w)
-#
-#     a = interaction(osc.ic.shape)
-#     phase_difference = a.delta(osc.ic)
-#     g = a.gamma(phase_difference,**interaction_params[0])
-#
-#     print(dt.now(),
-#           '\nwavelet\n',
-#           w,'\n',type(w),
-#           '\n\nphase difference vector\n',
-#           g.flatten(),'\n',
-#           type(g.flatten()),
-#           '\nwavelet*difference\n',
-#           w*g.flatten()
-#           )
-#
-# def gif_test():
-#     from lib.animate import animate
-#     filepath = Path('/Users/Michael/Documents/GitHub/kuramoto-osc/Python/Oscillator Phase in 0_pi')
-#     vid = animate(filepath)
-#     vid.to_gif(filepath,0.75,True)
-#
-#
-#
-# def move_dirs():
-#     from lib.plotformat import setup
-#     fmt = setup('test_dir',3)
-#     txt ='Oscillator Phase in pi'
-#     print(txt)
-#     print(fmt.plot_name(str(txt)))
-#
-#
-#
-#
-#
-# def load_j():
-#     import json
-#     f = open('model_config.json')
-#     var = json.load(f)
-#     [print(var['test_set0'][k]) for k,v in var['test_set0'].items()]
-"""
+    distance = 8
+    resolution = 1000
+    x = np.linspace(-distance, distance, resolution)
+    s = 1
+    wave = wavelet(x, s, distance)
+
+    plot_wavelet(
+        np.asarray([x, wave]).T,
+        f'Morelt Wavelet with width={distance} and s={s}'
+    )
+
+
+
+
+
+
+
+def system(m,n):
+    #initialize an osc array
+    from modeling.cortical_sheet import OscillatorArray
+
+    syst_params =  {
+                  "initial": {
+                    "type": "uniform",
+                    "low": 0,
+                    "high": 6.28318
+                  },
+                  "interaction" : {
+                    "beta":0,
+                    "r":0
+                  },
+                  "kernel" : {
+                    "s":0,
+                    "width":0
+                  },
+                  "normalize_kernel": False,
+                  "natural_freq" : {
+                    "a": 1,
+                    "b":0,
+                    "c":0.4
+                  },
+                  "driver": {
+                    "use_driver": False,
+                    "driver_weight":0
+                  }
+                }
+
+    gain_ratio = 5
+
+    osc = OscillatorArray((m,n),syst_params,gain_ratio)
+    print(osc.ic)
+    from modeling.wavelet import make_kernel
+
+    # fixed time wavelet kernel
+
+    p = {
+      "s":2,
+      "width":2
+    }
+
+
+    s = make_kernel("wavelet",**p)
+
+
+    w = s(osc.distance)
+    print(dt.now(),'\nwavelet\n',w)
+
+    from modeling.interaction import Interaction
+
+
+    q = {'beta': 0.25, 'r':0.95}
+
+
+    a = Interaction(osc.ic.shape,**q)
+
+    phase_difference = a.delta(osc.ic.ravel())
+    g = a.gamma(phase_difference)
+
+    print(dt.now(),
+          '\nwavelet\n',
+          w,'\n',type(w),
+          '\n\nphase difference vector\n',
+          g,'\n',
+          type(g.flatten()),
+          '\nwavelet*difference\n',
+          w*g
+          )
+          # just going to renmae variable vals
+    K = gain_ratio
+    W = w
+
+    deltas = phase_difference
+    G = g
+
+
+    N = np.prod(osc.ic.shape)
+
+    print(K/N)
+    print(W*G,np.sum(W*G,axis=1), np.sum(W*G,axis=1).shape)
+    print(osc.natural_frequency.ravel())
+    dx = K/N*np.sum(W*G,axis=1) + osc.natural_frequency.ravel()
+    print(dx, dx.shape)
+
+
+def gif_test():
+    from lib.animate import animate
+    filepath = Path('/Users/Michael/Documents/GitHub/kuramoto-osc/Python/Oscillator Phase in 0_pi')
+    vid = animate(filepath)
+    vid.to_gif(filepath,0.75,True)
+
+
+
+def move_dirs():
+    from lib.plotformat import setup
+    fmt = setup('test_dir',3)
+    txt ='Oscillator Phase in pi'
+    print(txt)
+    print(fmt.plot_name(str(txt)))
+
+
+
+
+
+def load_j():
+    import json
+    f = open('model_config.json')
+    var = json.load(f)
+    [print(var['test_set0'][k]) for k,v in var['test_set0'].items()]
+
 
 def index_ts():
     zshape = (24,24,500)
@@ -236,8 +306,10 @@ def plt_title():
 
 def main():
     # distance_test(3,3)
-    wavelet_test()
-    decouple_test()
+    # wavelet_plot()
+    # wavelet_test()
+    # decouple_test()
+    system(2,2)
     # gif_test()
     # normal_test()
     # move_dirs()
