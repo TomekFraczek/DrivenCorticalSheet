@@ -44,21 +44,21 @@
     "gain_ratio": 9
   },
   "test_set": {
-    "output_dir_name": "placeholder",
+    "output_dir_name":"placeholder",
     "save_numpy": true,
 
     "ODE_method": "LSODA",
     "continuous_soln": true,
     "max_delta_t":0.1,
     "zero_ics": false,
-    "frames": 1000,
-    "frame_rate": 0.33,
+    "frames": 500,
+    "frame_rate": 0.34,
     "interpolate_plot": false,
     "inspect_t_seconds": 2,
     "inspect_t_samples": 3,
 
-    "sqrt_nodes": 64,
-    "time": 3,
+    "sqrt_nodes": 48,
+    "time": 9,
 
     "system": {
       "initial": {
@@ -71,8 +71,8 @@
         "r":0
       },
       "kernel" : {
-        "s":3,
-        "width": 40
+        "s":1,
+        "width": 10
       },
       "normalize_kernel": false,
       "natural_freq": {
@@ -85,7 +85,7 @@
         "driver_weight":0
       }
     },
-    "gain_ratio": 2,
+    "gain_ratio": 10,
 
     "external_input":false,
     "external_input_weight":0
