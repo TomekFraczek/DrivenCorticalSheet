@@ -26,31 +26,24 @@ class KuramotoSystem(object):
 
         if initialize:  # Option to not initialize for later plotting purposes
             self.osc = OscillatorArray(array_size, system_params, gain)
-            self.wavelet = self.wavelet_func(self.osc.distance.ravel())
+            self.wavelet = self.wavelet_func(self.osc.distance)
 
         self.external_input = external_input
         self.input_weight = input_weight
         print('System ready!')
 
     def differential_equation(self, t: float, x: np.ndarray, ):
-        """ of the form: xi - 'k/n * sum_all(x0:x_N)*fn_of_dist(xi - x_j) * sin(xj - xi))'
+        """ of the form: wi - 'k/n * sum_all(x0:x_N)*fn_of_dist(xi - x_j) * sin(xj - xi))'
         """
-
         K = self.gain
         W = self.wavelet
+        deltas = self.interaction.delta(x.ravel())
 
-        deltas = self.interaction.delta(
-                    x.ravel()
-                )
-        G = (
-            self.interaction.gamma(
-                deltas
-            )
-        ).ravel()
+        G = self.interaction.gamma(deltas)
 
         N = np.prod(self.osc.ic.shape)
 
-        dx = K/N*np.sum(W*G) + self.osc.natural_frequency.ravel()
+        dx = K/N*np.sum(W*G,axis=1).ravel() + self.osc.natural_frequency.ravel()
 
         if self.external_input:
             dx += self.input_weight*self.external_input_fn(t)

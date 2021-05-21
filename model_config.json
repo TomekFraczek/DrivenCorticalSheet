@@ -10,7 +10,7 @@
     "frames": 500,
     "frame_rate": 0.340,
     "interpolate_plot": false,
-    "inspect_t_seconds":0.2,
+    "inspect_t_seconds":2,
     "inspect_t_samples":4,
 
     "sqrt_nodes":10,
@@ -44,17 +44,17 @@
     "gain_ratio": 9
   },
   "test_set": {
-    "output_dir_name": "placeholder",
+    "output_dir_name":"placeholder",
     "save_numpy": true,
 
     "ODE_method": "LSODA",
     "continuous_soln": true,
     "max_delta_t":0.1,
     "zero_ics": false,
-    "frames": 100,
-    "frame_rate": 0.10,
+    "frames": 1000,
+    "frame_rate": 0.22,
     "interpolate_plot": false,
-    "inspect_t_seconds": 0.35,
+    "inspect_t_seconds": 2,
     "inspect_t_samples": 3,
 
     "sqrt_nodes": 10,
@@ -72,7 +72,7 @@
       },
       "kernel" : {
         "s":3,
-        "width": 40
+        "width": 6
       },
       "normalize_kernel": false,
       "natural_freq": {
@@ -85,7 +85,54 @@
         "driver_weight":0
       }
     },
-    "gain_ratio": 2,
+    "gain_ratio": 12,
+
+    "external_input":false,
+    "external_input_weight":0
+  },
+  "test_set_bifn": {
+    "output_dir_name":"placeholder",
+    "save_numpy": true,
+
+    "ODE_method": "LSODA",
+    "continuous_soln": true,
+    "max_delta_t":0.1,
+    "zero_ics": false,
+    "frames": 1000,
+    "frame_rate": 0.22,
+    "interpolate_plot": false,
+    "inspect_t_seconds": 2,
+    "inspect_t_samples": 3,
+
+    "sqrt_nodes": 24,
+    "time": 13,
+
+    "system": {
+      "initial": {
+        "type": "uniform",
+        "low": 0,
+        "high": 6.28318
+      },
+      "interaction" : {
+        "beta":0.25,
+        "r":0.95
+      },
+      "kernel" : {
+        "s":3,
+        "width": 6
+      },
+      "normalize_kernel": false,
+      "natural_freq": {
+        "a": 1,
+        "b": 0,
+        "c": 0.4
+      },
+      "driver": {
+        "use_driver": false,
+        "driver_weight":0
+      }
+    },
+    "gain_ratio": 11,
 
     "external_input":false,
     "external_input_weight":0

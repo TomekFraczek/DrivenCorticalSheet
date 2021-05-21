@@ -78,7 +78,7 @@ class OscillatorArray(object):
                           sparse=False, indexing='xy')
         u = u.ravel()
         v = v.ravel()
-        z = np.array([u,v])
+        z = np.array([u,v]).T
 
         for (k,x) in enumerate(z):
             d[k,:] = np.array(np.sqrt((u - x[0])**2 + (v - x[1])**2),dtype=t)

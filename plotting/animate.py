@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import StrMethodFormatter
 from plotting.plotformat import PlotSetup
 from progressbar import progressbar
+from datetime import datetime
 
 # gif_maker many thanks
 # https://stackoverflow.com/questions/753190/programmatically-generate-video-or-animated-gif-in-python
@@ -48,7 +49,7 @@ class Animator(object):
     def animate(self, oscillator_states, times, cleanup=True):
         """Create an animation of the evolution of oscillator phases over time"""
         self.plot_frames(oscillator_states, times)
-        self.to_gif()
+        self.to_gif(True)  # sort by timestamp broke if True
         if cleanup:
             self.cleanup()
 
@@ -78,7 +79,7 @@ class Animator(object):
         plt.ylabel(self.y_axis)
 
         plt.grid(b=None, which='major', axis='both')
-        fig.savefig(self.temp.file_name(f'Phases_at_t={t:.2f}', 'png'))
+        fig.savefig(self.temp.file_name(f'Phases_at_t={t:.2f}_{datetime.now().strftime("%y%m%d_%H%M%S%f")}', 'png'))
         plt.close('all')
 
     def to_gif(self, sort: bool = False, ext: str = 'png'):
@@ -90,7 +91,7 @@ class Animator(object):
         ]
 
         if sort:
-            s = lambda x: re.split(r'\d*\.*\d*_', str(x), 1)   # t = 1.4_20200505... & 15_2020..
+            s = lambda x: re.split(r' at t = \d*\.*\d*_',str(x),1)   # t = 1.4_20200505... & 15_2020..
             index = np.array([s(file) for file in file_list], dtype=str)
             if len(index.shape) == 1:
                 print('err 1D arry')
@@ -189,4 +190,3 @@ class Animator(object):
     #         # os.rmdir(archive, *, dir_fd=None)
     #     except:
     #         print(f'error zipping images, make sure to clean {targetpath.stem} up before running agin :)')
-
