@@ -1,3 +1,4 @@
+import os
 import json
 import argparse
 import sys
@@ -6,6 +7,7 @@ import numpy as np
 
 from logger import Logger
 from pathlib import Path
+from joblib import Parallel, delayed
 from modeling.model import KuramotoSystem, plot_interaction
 from plotting.animate import Animator
 from plotting.plot_solution import PlotSetup
@@ -131,6 +133,36 @@ def run(config_set: str = 'local_sync', config_file: str = 'model_config.json', 
         plot(config=config, osc_states=oscillator_state, time=time, fmt=path_fmt)
 
 
+def sweep(var_name, start, stop, steps, n_jobs=-2,
+          config_set='gain_sweep', config_file: str = 'model_config.json', base_path='plots'):
+    with open(Path(config_file).resolve()) as f:
+        var = json.load(f)
+    base_config = var[config_set]
+    conf_str = json.dumps(base_config)
+
+    var_key = '"<sweep-var>"'
+    if var_key not in conf_str:
+        raise KeyError('The swept config set must have the target variable replaced by \'"<sweep-var>"\'')
+
+    base_fmt = PlotSetup(base_folder=base_path, label=f'{config_set}_sweep')
+
+    var_values = np.linspace(start, stop, steps, endpoint=True)
+    all_configs = []
+    file_fmts = []
+    for value in var_values:
+        str_here = conf_str.replace(var_key, str(round(value, 4)))
+        config = json.loads(str_here)
+        fmt = PlotSetup(base_folder=base_fmt.directory, label=f'{var_name}={value:.2f}')
+
+        all_configs.append(config)
+        file_fmts.append(fmt)
+
+    Parallel(n_jobs=n_jobs, verbose=20)(
+        delayed(model)(all_configs[i], file_fmts[i])
+        for i in range(len(all_configs))
+    )
+
+
 def main():
     """Function to run"""
     parser = argparse.ArgumentParser(description='Select model_config scenario & path (optional):')
@@ -153,8 +185,39 @@ def main():
     parser.add_argument('--plot', action='store_true',
                         help='Whether to plot the results right away')
 
+    parser.add_argument('--sweep', action='store_true',
+                        help='Whether to plot the results right away')
+
+    parser.add_argument('--var', metavar='variable',
+                        type=str, nargs='?',
+                        help='Name of variable being swept',
+                        default='Var')
+
+    parser.add_argument('--start', metavar='sweep start',
+                        type=float, nargs='?',
+                        help='Start value of the sweep variable',
+                        default=0.0)
+
+    parser.add_argument('--stop', metavar='sweep stop',
+                        type=float, nargs='?',
+                        help='End value of the sweep variable, included',
+                        default=1.0)
+
+    parser.add_argument('--steps', metavar='num steps',
+                        type=int, nargs='?',
+                        help='Number of steps in the sweep',
+                        default=10)
+
+    parser.add_argument('--jobs', metavar='num jobs',
+                        type=int, nargs='?',
+                        help='Number of parallel jobs to run',
+                        default=-2)
+
     args = parser.parse_args()
-    run(args.set, args.path, do_plot=args.plot)
+    if args.sweep:
+        sweep(args.var, args.start, args.stop, args.steps, args.jobs, args.set, args.path, args.out)
+    else:
+        run(args.set, args.path, base_path=args.out, do_plot=args.plot)
 
 
 if __name__ == '__main__':
