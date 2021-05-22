@@ -8,27 +8,28 @@
     "max_delta_t":0.1,
     "zero_ics": true,
     "frames": 500,
-    "frame_rate": 0.340,
+    "frame_rate": 0.22,
     "interpolate_plot": false,
     "inspect_t_seconds":2,
     "inspect_t_samples":4,
 
-    "sqrt_nodes":10,
-    "time": 5,
+    "sqrt_nodes":32,
+    "time": 8,
 
     "system": {
       "initial": {
-        "type": "uniform",
-        "low": 0,
-        "high": 6.28318
+        "type": "gaussian",
+        "a": 1,
+        "b": 3.14,
+        "c": 1.05
       },
       "interaction" : {
         "beta":0,
         "r":0
       },
       "kernel" : {
-        "s":0,
-        "width":0
+        "s":3,
+        "width":12
       },
       "normalize_kernel": false,
       "natural_freq" : {
@@ -41,7 +42,10 @@
         "driver_weight":0
       }
     },
-    "gain_ratio": 9
+    "gain_ratio": 10,
+    "external_input":false,
+    "external_input_weight":0
+
   },
   "test_set": {
     "output_dir_name":"placeholder",
@@ -62,9 +66,10 @@
 
     "system": {
       "initial": {
-        "type": "uniform",
-        "low": 0,
-        "high": 6.28318
+        "type": "gaussian",
+        "a": 1,
+        "b": 3.14,
+        "c": 1.05
       },
       "interaction" : {
         "beta":0,
@@ -109,9 +114,10 @@
 
     "system": {
       "initial": {
-        "type": "uniform",
-        "low": 0,
-        "high": 6.28318
+        "type": "gaussian",
+        "a": 1,
+        "b": 3.14,
+        "c": 1.05
       },
       "interaction" : {
         "beta":0.25,
@@ -156,9 +162,10 @@
 
     "system": {
       "initial": {
-        "type": "uniform",
-        "low": 0,
-        "high": 6.28318
+        "type": "gaussian",
+        "a": 1,
+        "b": 3.14,
+        "c": 1.05
       },
       "interaction" : {
         "beta":0,

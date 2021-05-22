@@ -28,8 +28,8 @@ class OscillatorArray(object):
         params = self.init_params
         rng = np.random.default_rng()
         if params['type'] == 'gaussian':
-            x = gauss_width(*params)
-            prob = gaussian(x, *params.values())
+            x = gauss_width(**params)
+            prob = gaussian(x, **params)
             prob = prob/np.sum(prob)  # pdf for weights
             phase = rng.choice(x, size=m*n, p=prob, replace=False)\
                 .reshape(m, n)
