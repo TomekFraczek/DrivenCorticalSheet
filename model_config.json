@@ -1,7 +1,7 @@
 {
   "local_sync": {
     "output_dir_name": "placeholder",
-    "save_numpy": false,
+    "save_numpy": true,
 
     "ODE_method": "LSODA",
     "continuous_soln": true,
@@ -13,7 +13,7 @@
     "inspect_t_seconds":2,
     "inspect_t_samples":4,
 
-    "sqrt_nodes":32,
+    "sqrt_nodes":8,
     "time": 8,
 
     "system": {
@@ -29,7 +29,7 @@
       },
       "kernel" : {
         "s":3,
-        "width":12
+        "width":9
       },
       "normalize_kernel": false,
       "natural_freq" : {
@@ -55,13 +55,13 @@
     "continuous_soln": true,
     "max_delta_t":0.1,
     "zero_ics": false,
-    "frames": 1000,
+    "frames": 500,
     "frame_rate": 0.22,
     "interpolate_plot": false,
     "inspect_t_seconds": 2,
     "inspect_t_samples": 3,
 
-    "sqrt_nodes": 36,
+    "sqrt_nodes": 16,
     "time": 10,
 
     "system": {
@@ -76,8 +76,8 @@
         "r":0
       },
       "kernel" : {
-        "s":3,
-        "width": 16
+        "s":2.5,
+        "width": 5
       },
       "normalize_kernel": false,
       "natural_freq": {
@@ -90,7 +90,7 @@
         "driver_weight":0
       }
     },
-    "gain_ratio": 12,
+    "gain_ratio": 8,
 
     "external_input":false,
     "external_input_weight":0
@@ -103,14 +103,14 @@
     "continuous_soln": true,
     "max_delta_t":0.1,
     "zero_ics": false,
-    "frames": 1000,
+    "frames": 500,
     "frame_rate": 0.22,
     "interpolate_plot": false,
     "inspect_t_seconds": 2,
     "inspect_t_samples": 3,
 
-    "sqrt_nodes": 96,
-    "time": 13,
+    "sqrt_nodes": 12,
+    "time": 10,
 
     "system": {
       "initial": {
@@ -124,8 +124,8 @@
         "r":0.95
       },
       "kernel" : {
-        "s":3,
-        "width": 16
+        "s":2.5,
+        "width": 5
       },
       "normalize_kernel": false,
       "natural_freq": {
@@ -138,7 +138,7 @@
         "driver_weight":0
       }
     },
-    "gain_ratio": 11,
+    "gain_ratio": 8,
 
     "external_input":false,
     "external_input_weight":0

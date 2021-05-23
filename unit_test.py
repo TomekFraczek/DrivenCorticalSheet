@@ -105,7 +105,7 @@ def wavelet_plot():
     distance = 8
     resolution = 1000
     x = np.linspace(-distance, distance, resolution)
-    s = 1
+    s = 2.5
     wave = wavelet(x, s, distance)
 
     plot_wavelet(
@@ -190,7 +190,6 @@ def system(m,n):
           w*g
           )
           # just going to renmae variable vals
-    K = gain_ratio
     W = w
 
     deltas = phase_difference
@@ -198,12 +197,14 @@ def system(m,n):
 
 
     N = np.prod(osc.ic.shape)
+    K = gain_ratio*Ns
 
-    print(K/N)
-    print(W*G,np.sum(W*G,axis=1), np.sum(W*G,axis=1).shape)
-    print(osc.natural_frequency.ravel())
+    print(K/N,'\n')
+    
+    print(W*G,np.sum(W*G,axis=1), np.sum(W*G,axis=1).shape,'\n')
+    print(osc.natural_frequency.ravel(),'\n')
     dx = K/N*np.sum(W*G,axis=1) + osc.natural_frequency.ravel()
-    print(dx, dx.shape)
+    print(dx, dx.shape,'\n')
 
 
 def gif_test():
