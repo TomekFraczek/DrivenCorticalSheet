@@ -13,8 +13,7 @@ np.set_printoptions(precision=3, suppress=True)
 
 
 class KuramotoSystem(object):
-    def __init__(self, array_size, system_params, gain,
-                 external_input: bool = False, input_weight: float = 0, initialize=True):
+    def __init__(self, array_size, system_params, gain, initialize=True):
 
         print('Initializing model...')
         self.gain = gain
@@ -29,13 +28,13 @@ class KuramotoSystem(object):
             self.osc = OscillatorArray(array_size, system_params, gain)
             self.wavelet = self.wavelet_func(self.osc.distance)
 
-        self.external_input = external_input
-        if external_input:
-            self.input_params = system_params['external_input']
-            self.input_weight = self.input_params['strength'] * np.ones((array_size[0],))
+        self.input_params = system_params['driver']
+        self.external_input = self.input_params['use_driver']
+        if self.external_input:
+            self.n_inputs = array_size[0]
+            self.input_weight = self.input_params['strength']
             self.input_freq = self.input_params['freq']
             self.input_effect = np.zeros((np.prod(array_size),))
-            self.make_input(array_size)
 
         print('System ready!')
 
@@ -50,7 +49,7 @@ class KuramotoSystem(object):
 
         N = np.prod(self.osc.ic.shape)
 
-        dx = K/N*np.sum(W*G,axis=1).ravel() + self.osc.natural_frequency.ravel()
+        dx = K/N*np.sum(W*G, axis=1).ravel() + self.osc.natural_frequency.ravel()
 
         if self.external_input:
             self.calc_input(t, x)
@@ -88,11 +87,11 @@ class KuramotoSystem(object):
                          )
 
     def calc_input(self, t: float, all_phases: np.ndarray):
-        osc_phases = all_phases[:self.input_weight.shape[0]]
-        input_phase = cos(self.input_freq*t)
+        osc_phases = all_phases[:self.n_inputs]
+        input_phase = self.input_freq * t * 2*np.pi
         deltas = input_phase - osc_phases
-        d_phase = self.interaction.gamma(deltas)
-        self.input_effect[:self.input_weight.shape[0]] = d_phase
+        d_phase = self.input_weight * -1 * np.sin(deltas)
+        self.input_effect[:self.n_inputs] = d_phase
 
 
 def plot_existing_interaction(deltas, dists, system, out_fmt=None):

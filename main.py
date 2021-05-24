@@ -31,9 +31,7 @@ def model(config, fmt: (str, PlotSetup) = 'simulation'):
     kuramoto = KuramotoSystem(
         (nodes_side, nodes_side),
         config['system'],
-        gain,
-        config['external_input'],
-        config['external_input_weight']
+        gain
     )
 
     # Run Model
