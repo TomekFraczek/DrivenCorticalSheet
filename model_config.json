@@ -57,8 +57,8 @@
     "inspect_t_seconds": 2,
     "inspect_t_samples": 3,
 
-    "sqrt_nodes": 24,
-    "time": 10,
+    "sqrt_nodes": 10,
+    "time": 2,
 
     "system": {
       "initial": {
@@ -179,7 +179,7 @@
         "driver_weight":0
       }
     },
-    "gain_ratio": 0.1,
+    "gain_ratio": 2,
 
     "external_input":false,
     "external_input_weight":0
@@ -227,5 +227,99 @@
       }
     },
     "gain_ratio": 12
+  },
+  "gain_sweep": {
+    "output_dir_name": "placeholder",
+    "save_numpy": true,
+
+    "ODE_method": "LSODA",
+    "continuous_soln": true,
+    "max_delta_t":0.1,
+    "zero_ics": false,
+    "frames": 100,
+    "frame_rate": 0.10,
+    "interpolate_plot": false,
+    "inspect_t_seconds": 0.35,
+    "inspect_t_samples": 3,
+
+    "sqrt_nodes": 20,
+    "time": 5,
+
+    "system": {
+      "initial": {
+        "type": "uniform",
+        "low": 0,
+        "high": 6.28318
+      },
+      "interaction" : {
+        "beta":0,
+        "r":0
+      },
+      "kernel" : {
+        "s":3,
+        "width": 8
+      },
+      "normalize_kernel": false,
+      "natural_freq": {
+        "a": 1,
+        "b": 0,
+        "c": 0.4
+      },
+      "driver": {
+        "use_driver": false,
+        "driver_weight":0
+      }
+    },
+    "gain_ratio": "<sweep-var>",
+
+    "external_input":false,
+    "external_input_weight":0
+  },
+  "weaker_beta": {
+    "output_dir_name": "placeholder",
+    "save_numpy": true,
+
+    "ODE_method": "LSODA",
+    "continuous_soln": true,
+    "max_delta_t":0.1,
+    "zero_ics": false,
+    "frames": 200,
+    "frame_rate": 0.10,
+    "interpolate_plot": false,
+    "inspect_t_seconds": 0.35,
+    "inspect_t_samples": 3,
+
+    "sqrt_nodes": 60,
+    "time": 10,
+
+    "system": {
+      "initial": {
+        "type": "uniform",
+        "low": 0,
+        "high": 6.28318
+      },
+      "interaction" : {
+        "beta": "<sweep-var>",
+        "r":0.25
+      },
+      "kernel" : {
+        "s":2,
+        "width": 15
+      },
+      "normalize_kernel": false,
+      "natural_freq": {
+        "a": 1,
+        "b": 0,
+        "c": 0.4
+      },
+      "driver": {
+        "use_driver": false,
+        "driver_weight":0
+      }
+    },
+    "gain_ratio": 0.1,
+
+    "external_input":false,
+    "external_input_weight":0
   }
 }
