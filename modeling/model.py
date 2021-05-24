@@ -53,7 +53,7 @@ class KuramotoSystem(object):
 
         if self.external_input:
             self.calc_input(t, x)
-            dx += self.input_weight*self.input_effect
+            dx += self.input_effect
 
         print('t_step:', np.round(t, 4))
 
