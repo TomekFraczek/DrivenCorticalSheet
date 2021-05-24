@@ -3,6 +3,7 @@ import json
 import numpy as np
 from scipy.integrate import solve_ivp
 from matplotlib import pyplot as plt
+from math import cos
 
 from modeling.cortical_sheet import OscillatorArray
 from modeling.wavelet import make_kernel
@@ -29,7 +30,13 @@ class KuramotoSystem(object):
             self.wavelet = self.wavelet_func(self.osc.distance)
 
         self.external_input = external_input
-        self.input_weight = input_weight
+        if external_input:
+            self.input_params = system_params['external_input']
+            self.input_weight = self.input_params['strength'] * np.ones((array_size[0],))
+            self.input_freq = self.input_params['freq']
+            self.input_effect = np.zeros((np.prod(array_size),))
+            self.make_input(array_size)
+
         print('System ready!')
 
     def differential_equation(self, t: float, x: np.ndarray, ):
@@ -46,7 +53,8 @@ class KuramotoSystem(object):
         dx = K/N*np.sum(W*G,axis=1).ravel() + self.osc.natural_frequency.ravel()
 
         if self.external_input:
-            dx += self.input_weight*self.external_input_fn(t)
+            self.calc_input(t, x)
+            dx += self.input_weight*self.input_effect
 
         print('t_step:', np.round(t, 4))
 
@@ -79,9 +87,12 @@ class KuramotoSystem(object):
                          vectorized=False
                          )
 
-    def external_input_fn(self, t:float):  # ,w:float):
-        # cos(w*t)
-        return 0
+    def calc_input(self, t: float, all_phases: np.ndarray):
+        osc_phases = all_phases[:self.input_weight.shape[0]]
+        input_phase = cos(self.input_freq*t)
+        deltas = input_phase - osc_phases
+        d_phase = self.interaction.gamma(deltas)
+        self.input_effect[:self.input_weight.shape[0]] = d_phase
 
 
 def plot_existing_interaction(deltas, dists, system, out_fmt=None):
