@@ -97,7 +97,7 @@ def load_data(data_folder):
     return config, osc_state, time, fmt
 
 
-def plot(config=None, osc_states=None, time=None, data_folder=None, fmt=None):
+def plot(config=None, osc_states=None, time=None, data_folder=None, fmt=None, cleanup=True):
     """Plot a gif of the phase evolution over time for the given data, optionally loaded from disk"""
 
     # No data provided explicitly, need to load from the passed folder
@@ -109,7 +109,7 @@ def plot(config=None, osc_states=None, time=None, data_folder=None, fmt=None):
         raise KeyError('Both the data_folder and the data contents were left blank!')
 
     vid = Animator(config, fmt)
-    vid.animate(osc_states, time, cleanup=True)
+    vid.animate(osc_states, time, cleanup=cleanup)
 
     plot_interaction(config['sqrt_nodes'], config['system'], config['gain_ratio'], out_fmt=fmt)
 
