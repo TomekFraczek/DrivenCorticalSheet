@@ -32,9 +32,10 @@ class KuramotoSystem(object):
         self.input_params = system_params['driver']
         self.external_input = self.input_params['use_driver']
         if self.external_input:
-            self.n_inputs = (self.kernel_params['width']+1)*array_size[0]
-            y_dist = np.array(range(self.n_inputs)) // (self.dims[1])
-            self.input_weight = self.input_params['strength'] * self.wavelet_func(y_dist)
+            self.n_inputs = np.prod(self.dims)
+            y_dist = (np.array(range(self.n_inputs)) + self.dims[1]) // (self.dims[1])
+
+            self.input_weight = self.input_params['strength'] / y_dist
             self.input_freq = self.input_params['freq']
             self.input_effect = np.zeros((np.prod(array_size),))
 
