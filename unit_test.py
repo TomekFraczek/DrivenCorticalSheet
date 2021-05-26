@@ -53,7 +53,7 @@ def distance_test(m:int = 128,
           '\n\ndistance shape\n',
           osc.distance.shape,
           '\n\ndistance vector\n',
-          osc.distance.flatten())
+          osc.distance)
 
     return osc.ic,osc.distance.flatten()
 
@@ -200,7 +200,7 @@ def system(m,n):
     K = gain_ratio*Ns
 
     print(K/N,'\n')
-    
+
     print(W*G,np.sum(W*G,axis=1), np.sum(W*G,axis=1).shape,'\n')
     print(osc.natural_frequency.ravel(),'\n')
     dx = K/N*np.sum(W*G,axis=1) + osc.natural_frequency.ravel()
@@ -269,7 +269,7 @@ def index_ts():
 
 
 
-
+"""
 def plt_title():
 
 
@@ -300,23 +300,69 @@ def plt_title():
 
         title = 'Timeseries for {s} Random Neighbors R={r:.2f} $\\beta$={beta:.2f} K/N={kn:.1f} & c={c:.0f})'.format(s=samples,
                                                                                                                      **interaction_params,
-                                                                                                                     **kernel_params,
-                                                                                                                     kn=kn)
 
-    print(title)
+                                                                                                                     print(title)
+
+"""
+
+
+
+
+def ind_compare():
+    x,y = np.meshgrid(np.arange(3),
+                      np.arange(3),
+                      sparse=False, indexing='ij')
+    print('ij\nx:\n',x,'\n\ny:\n',y)
+
+    x,y = np.meshgrid(np.arange(3),
+                      np.arange(3),
+                      sparse=False, indexing='xy')
+
+    print('\nxy\nx:\n',x,'\n\ny:\n',y)
+
+
+def torus(x, y, size_x, size_y):
+    """
+    https://stackoverflow.com/questions/62522809/\
+    how-to-generate-a-numpy-manhattan-distance-array-with-torus-geometry-fast
+    >>> f(x=2, y=3, size_x=8, size_y=8)
+    array([[5, 4, 3, 2, 3, 4, 5, 6],
+           [4, 3, 2, 1, 2, 3, 4, 5],
+           [3, 2, 1, 0, 1, 2, 3, 4],
+           [4, 3, 2, 1, 2, 3, 4, 5],
+           [5, 4, 3, 2, 3, 4, 5, 6],
+           [6, 5, 4, 3, 4, 5, 6, 7],
+           [7, 6, 5, 4, 5, 6, 7, 8],
+           [6, 5, 4, 3, 4, 5, 6, 7]])
+    >>> f(x=1, y=1, size_x=3, size_y=3)
+    array([[2, 1, 2],
+           [1, 0, 1],
+           [2, 1, 2]])
+    """
+    a, b = divmod(size_x, 2)
+    x_template = np.r_[:a+b, a:0:-1] # [0 1 2 1] for size_x == 4 and [0 1 2 2 1] for size_x == 5
+    x_template = np.roll(x_template, x) # for x == 2, size_x == 8: [2 1 0 1 2 3 4 3]
+    a, b = divmod(size_y, 2)
+    y_template = np.r_[:a+b, a:0:-1]
+    y_template = np.roll(y_template, y)
+    return np.add.outer(x_template, y_template)
+
+
+
 
 def main():
-    # distance_test(3,3)
+    distance_test(3,3)
     # wavelet_plot()
     # wavelet_test()
     # decouple_test()
-    system(2,2)
+    # system(2,2)
     # gif_test()
     # normal_test()
     # move_dirs()
     # load_j()
     # index_ts()
     # plt_title()
+    # print(torus(3,3,5,5))
 
 
 if __name__ == '__main__':

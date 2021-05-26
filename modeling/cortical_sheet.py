@@ -7,7 +7,6 @@ distance array
 import numpy as np
 from modeling.wavelet import gaussian, gauss_width
 
-
 class OscillatorArray(object):
     def __init__(self,  dimension: tuple, system_params, gain):
         print(f'Initializing {dimension} oscillator array...')
@@ -84,5 +83,33 @@ class OscillatorArray(object):
         z = np.array([u,v]).T
 
         for (k,x) in enumerate(z):
-            d[k,:] = np.array(np.sqrt((u - x[0])**2 + (v - x[1])**2),dtype=t)
+            # d[k,:] = np.array(np.sqrt((u - x[0])**2 + (v - x[1])**2),dtype=t)
+
+
+            d[k,:] = self.torus(x[0],x[1],
+                                self.ic.shape[0],
+                                self.ic.shape[1]
+                                ).ravel()
+
         return d
+
+
+
+
+    def torus(self,x, y, size_x, size_y):
+        """
+        https://stackoverflow.com/questions/62522809/\
+        how-to-generate-a-numpy-manhattan-distance-array-with-torus-geometry-fast
+
+        >>> f(x=1, y=1, size_x=3, size_y=3)
+        array([[2, 1, 2],
+               [1, 0, 1],
+               [2, 1, 2]])
+        """
+        a, b = divmod(size_x, 2)
+        x_template = np.r_[:a+b, a:0:-1] # [0 1 2 1] for size_x == 4 and [0 1 2 2 1] for size_x == 5
+        x_template = np.roll(x_template, x) # for x == 2, size_x == 8: [2 1 0 1 2 3 4 3]
+        a, b = divmod(size_y, 2)
+        y_template = np.r_[:a+b, a:0:-1]
+        y_template = np.roll(y_template, y)
+        return np.add.outer(x_template, y_template)

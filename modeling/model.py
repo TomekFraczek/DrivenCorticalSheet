@@ -36,10 +36,10 @@ class KuramotoSystem(object):
         """ of the form: wi - 'k/n * sum_all(x0:x_N)*fn_of_dist(xi - x_j) * sin(xj - xi))'
         """
         K = self.gain
-        W = self.wavelet
+        W = self.wavelet # indx where < threshold
         deltas = self.interaction.delta(x.ravel())
 
-        G = self.interaction.gamma(deltas)
+        G = self.interaction.gamma(deltas)  # mask
 
         N = np.prod(self.osc.ic.shape)
 

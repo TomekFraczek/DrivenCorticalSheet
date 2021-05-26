@@ -13,8 +13,8 @@
     "inspect_t_seconds":2,
     "inspect_t_samples":4,
 
-    "sqrt_nodes":8,
-    "time": 8,
+    "sqrt_nodes":16,
+    "time": 3,
 
     "system": {
       "initial": {
@@ -24,8 +24,8 @@
         "c": 1.05
       },
       "interaction" : {
-        "beta":0,
-        "r":0
+        "beta":0.55,
+        "r":0.25
       },
       "kernel" : {
         "s":3,
@@ -42,7 +42,7 @@
         "driver_weight":0
       }
     },
-    "gain_ratio": 10,
+    "gain_ratio": 11,
     "external_input":false,
     "external_input_weight":0
 
