@@ -3,6 +3,7 @@ import json
 import numpy as np
 from scipy.integrate import solve_ivp
 from matplotlib import pyplot as plt
+from math import cos
 
 from modeling.cortical_sheet import OscillatorArray
 from modeling.wavelet import make_kernel
@@ -12,11 +13,11 @@ np.set_printoptions(precision=3, suppress=True)
 
 
 class KuramotoSystem(object):
-    def __init__(self, array_size, system_params, gain,
-                 external_input: bool = False, input_weight: float = 0, initialize=True):
+    def __init__(self, array_size, system_params, gain, initialize=True):
 
         print('Initializing model...')
         self.gain = gain
+        self.dims = array_size
 
         self.interaction_params = system_params['interaction']
         self.interaction = Interaction(array_size, **self.interaction_params)
@@ -28,8 +29,16 @@ class KuramotoSystem(object):
             self.osc = OscillatorArray(array_size, system_params, gain)
             self.wavelet = self.wavelet_func(self.osc.distance)
 
-        self.external_input = external_input
-        self.input_weight = input_weight
+        self.input_params = system_params['driver']
+        self.external_input = self.input_params['use_driver']
+        if self.external_input:
+            self.n_inputs = np.prod(self.dims)
+            y_dist = (np.array(range(self.n_inputs)) + self.dims[1]) // (self.dims[1])
+
+            self.input_weight = self.input_params['strength'] / y_dist
+            self.input_freq = self.input_params['freq']
+            self.input_effect = np.zeros((np.prod(array_size),))
+
         print('System ready!')
 
     def differential_equation(self, t: float, x: np.ndarray, ):
@@ -43,10 +52,11 @@ class KuramotoSystem(object):
 
         N = np.prod(self.osc.ic.shape)
 
-        dx = K/N*np.sum(W*G,axis=1).ravel() + self.osc.natural_frequency.ravel()
+        dx = K/N*np.sum(W*G, axis=1).ravel() + self.osc.natural_frequency.ravel()
 
         if self.external_input:
-            dx += self.input_weight*self.external_input_fn(t)
+            self.calc_input(t, x)
+            dx += self.input_effect
 
         print('t_step:', np.round(t, 4))
 
@@ -79,9 +89,12 @@ class KuramotoSystem(object):
                          vectorized=False
                          )
 
-    def external_input_fn(self, t:float):  # ,w:float):
-        # cos(w*t)
-        return 0
+    def calc_input(self, t: float, all_phases: np.ndarray):
+        osc_phases = all_phases[:self.n_inputs]
+        input_phase = self.input_freq * t * 2*np.pi
+        deltas = input_phase - osc_phases
+        d_phase = self.input_weight * -1 * np.sin(deltas)
+        self.input_effect[:self.n_inputs] = d_phase
 
 
 def plot_existing_interaction(deltas, dists, system, out_fmt=None):
