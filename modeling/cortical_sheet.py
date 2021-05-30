@@ -112,4 +112,6 @@ class OscillatorArray(object):
         a, b = divmod(size_y, 2)
         y_template = np.r_[:a+b, a:0:-1]
         y_template = np.roll(y_template, y)
-        return np.add.outer(x_template, y_template)
+
+        d = np.sqrt(np.add.outer(x_template**2, y_template**2))
+        return d
