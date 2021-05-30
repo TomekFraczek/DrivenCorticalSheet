@@ -91,7 +91,7 @@ class Animator(object):
         ]
 
         if sort:
-            s = lambda x: re.split(r' at t = \d*\.*\d*_',str(x),1)   # t = 1.4_20200505... & 15_2020..
+            s = lambda x: re.split(r'_t=\d*\.*\d*_',str(x),1)   # t = 1.4_20200505... & 15_2020..
             index = np.array([s(file) for file in file_list], dtype=str)
             if len(index.shape) == 1:
                 print('err 1D arry')

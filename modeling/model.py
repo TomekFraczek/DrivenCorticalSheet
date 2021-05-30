@@ -41,14 +41,14 @@ class KuramotoSystem(object):
 
         print('System ready!')
 
-    def differential_equation(self, t: float, x: np.ndarray, ):
+    def differential_equation(self, t: float, x: np.ndarray, inspect:bool=False):
         """ of the form: wi - 'k/n * sum_all(x0:x_N)*fn_of_dist(xi - x_j) * sin(xj - xi))'
         """
         K = self.gain
-        W = self.wavelet
+        W = self.wavelet # indx where < threshold
         deltas = self.interaction.delta(x.ravel())
 
-        G = self.interaction.gamma(deltas)
+        G = self.interaction.gamma(deltas)  # mask
 
         N = np.prod(self.osc.ic.shape)
 
@@ -58,9 +58,38 @@ class KuramotoSystem(object):
             self.calc_input(t, x)
             dx += self.input_effect
 
+        dx = np.mod(dx,2*np.pi)*np.sign(dx)
+
         print('t_step:', np.round(t, 4))
 
-        return dx
+        # inspect = True
+
+        if not inspect:
+            return dx
+        else:
+            print('\nics\n',self.osc.ic.ravel(),
+                '\nx\n',x,
+                '\ndistance\n', self.osc.distance,
+                '\ndiff\n',deltas,
+                '\nG\n',G,'\nW\n',W,
+                '\nG*W\n',G*W,
+                '\nsum(G*W)\n',np.sum(W*G,axis=1),
+                '\nnatl frequency\n',self.osc.natural_frequency,
+                '\ndx\n',dx,
+                '\nmean+3sigma(dx)',
+                np.round(np.mean(dx)+3*np.std(dx),3),
+                '\nmean(dx)',np.round(np.mean(dx),3),
+                '\nmean-3sigma(dx)',
+                np.round(np.mean(dx)-3*np.std(dx),3),
+                '\nstdev(dx)', np.round(np.std(dx),3),
+                )
+            # input('\n...')
+            return dx
+
+
+
+
+
 
     def solve(self,
               time_scale: tuple = (0, 10),

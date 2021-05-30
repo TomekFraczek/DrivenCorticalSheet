@@ -35,17 +35,20 @@ def wavelet(x: np.ndarray, s: float, width: float) -> np.ndarray:
     return np.real(wave)/norm
 
 
-def gauss_width(b: float = 0, c: float = 1, **kwargs):
+def gauss_width(**kwargs:dict):
+    """modified to accept 4-val initial conditions params"""
+    # print(kwargs)
+    b,c = map(kwargs.get,('b','c'))
     return np.linspace(b - 3.5 * c,  b + 3.5 * c, num=int(1e6))
 
 
 def gaussian(
              x: np.ndarray,
-             a: float = 1,
-             b: float = 0,
-             c: float = 1
+             **kwargs:dict
              ) -> np.ndarray:
     """generalized gaussian function"""
+    a,b,c = map(kwargs.get,('a','b','c'))
+
     return a*np.exp(-(x-b)**2/2/c**2)
 
 

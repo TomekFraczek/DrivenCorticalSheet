@@ -41,7 +41,7 @@ class Interaction(object):
         return d
 
     def gamma(self, x: np.ndarray) -> np.ndarray:
-        sign = -1 if self.r else 1  #togles between eqn 13 & 11 w/ presence of 2nd order term
+        sign = -1 # if self.r else 1  #togles between eqn 13 & 11 w/ presence of 2nd order term
         return sign*np.sin(x+self.beta) + self.r*np.sin(2*x)
 
     def plot_phase(self,
