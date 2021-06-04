@@ -8,7 +8,7 @@ setup(name='DrivenCorticalSheet',
       version=__version__,
       description='AMATH 575 project on weakly coupled phase synchonous oscillators\
                    with the addition of a driving oscillator',
-      url='https://github.com/TomekFraczek/DrivenCorticalSheet'
+      url='https://github.com/TomekFraczek/DrivenCorticalSheet',
       author=['Tomek Fraczek',
               'Michael Willy',
               'Group Contributors:',
