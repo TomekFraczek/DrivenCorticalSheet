@@ -8,10 +8,12 @@ import numpy as np
 from modeling.wavelet import gaussian, gauss_width
 
 class OscillatorArray(object):
-    def __init__(self,  dimension: tuple, system_params, gain):
+    def __init__(self,  dimension: tuple, system_params, gain, boundary=False):
         print(f'Initializing {dimension} oscillator array...')
         self.init_params = system_params['initial']
         self.freq_params = system_params['natural_freq']
+        self.boundary = boundary
+        self.gain = gain
 
         self.ic = self.prep_initial_conditions(*dimension)
         # Useful debug initital conditions that neatly increase over the whole space
@@ -20,7 +22,6 @@ class OscillatorArray(object):
         self.natural_frequency = self.prep_natural_frequency()
         self.distance = self.prep_distance()
 
-        self.gain = gain
 
     def prep_initial_conditions(self, m: int = 16, n: int = 16) -> np.ndarray:
         """Randomly draw the initial phase for each oscillator in the array"""
@@ -83,13 +84,14 @@ class OscillatorArray(object):
         z = np.array([u,v]).T
 
         for (k,x) in enumerate(z):
-            # d[k,:] = np.array(np.sqrt((u - x[0])**2 + (v - x[1])**2),dtype=t)
+            if not self.boundary:
+                d[k,:] = np.array(np.sqrt((u - x[0])**2 + (v - x[1])**2),dtype=t)
 
-
-            d[k,:] = self.torus(x[0],x[1],
-                                self.ic.shape[0],
-                                self.ic.shape[1]
-                                ).ravel()
+            else:
+                d[k,:] = self.torus(x[0],x[1],
+                                    self.ic.shape[0],
+                                    self.ic.shape[1]
+                                    ).ravel()
 
         return d
 

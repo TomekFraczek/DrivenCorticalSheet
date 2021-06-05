@@ -13,7 +13,7 @@ np.set_printoptions(precision=3, suppress=True)
 
 
 class KuramotoSystem(object):
-    def __init__(self, array_size, system_params, gain, initialize=True):
+    def __init__(self, array_size, system_params, gain, initialize=True, boundary=False):
 
         print('Initializing model...')
         self.gain = gain
@@ -26,7 +26,7 @@ class KuramotoSystem(object):
         self.wavelet_func = make_kernel('wavelet', **self.kernel_params)
 
         if initialize:  # Option to not initialize for later plotting purposes
-            self.osc = OscillatorArray(array_size, system_params, gain)
+            self.osc = OscillatorArray(array_size, system_params, gain, boundary)
             self.wavelet = self.wavelet_func(self.osc.distance)
 
         self.input_params = system_params['driver']
@@ -58,7 +58,7 @@ class KuramotoSystem(object):
             self.calc_input(t, x)
             dx += self.input_effect
 
-        dx = np.mod(dx,2*np.pi)*np.sign(dx)
+        # dx = np.mod(dx,2*np.pi)*np.sign(dx)
 
         print('t_step:', np.round(t, 4))
 
@@ -66,6 +66,7 @@ class KuramotoSystem(object):
 
         if not inspect:
             return dx
+
         else:
             print('\nics\n',self.osc.ic.ravel(),
                 '\nx\n',x,
