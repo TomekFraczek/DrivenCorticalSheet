@@ -26,6 +26,7 @@ def model(config, fmt: (str, PlotSetup) = 'simulation'):
     nodes_side = config['sqrt_nodes']
     time = config['time']
     gain_ratio = config['gain_ratio']
+    torus = True
 
     # Init model
     gain = gain_ratio*nodes_side**2
@@ -33,7 +34,8 @@ def model(config, fmt: (str, PlotSetup) = 'simulation'):
     kuramoto = KuramotoSystem(
         (nodes_side, nodes_side),
         config['system'],
-        gain
+        gain,
+        boundary=torus
     )
 
     # Run Model
