@@ -35,7 +35,7 @@ class KuramotoSystem(object):
             self.n_inputs = np.prod(self.dims)
             y_dist = (np.array(range(self.n_inputs)) + self.dims[1]) // (self.dims[1])
 
-            self.input_weight = self.input_params['strength'] / y_dist
+            self.input_weight = self.input_params['strength'] / y_dist ** 2
             self.input_freq = self.input_params['freq']
             self.input_effect = np.zeros((np.prod(array_size),))
 
