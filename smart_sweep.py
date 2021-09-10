@@ -1,12 +1,12 @@
 import os
 import json
+import argparse
 
 import numpy as np
 from joblib import Parallel, delayed
 
 from plotting.plotformat import PlotSetup
 from main import model, save_data, plot
-
 
 
 MAX_TRIES = 5
@@ -45,7 +45,7 @@ def prep_points(out_dir, sweep_config):
 
 
 def sure_run(path_fmt, point_list, tries, n_jobs=-1):
-
+    """Run all points, recursively re-trying to run points that fail"""
     # Send command to run all points in parallel
     point_paths = [os.path.join(path_fmt, point_list)]
     Parallel(n_jobs=n_jobs, verbose=20)(
@@ -87,3 +87,24 @@ def check_complete(path_fmt):
     incomplete = [f for f in folders_here if not os.path.exists(os.path.join(f, 'completion.txt'))]
     return incomplete
 
+
+def main():
+    """Function to run the sweep from the commandline"""
+    parser = argparse.ArgumentParser(description='Select model_config scenario & path (optional):')
+
+    parser.add_argument('--out', metavar='output directory',
+                        type=str, nargs='?',
+                        help='base path to output raw data and plots',
+                        default='plots')
+
+    parser.add_argument('--config', metavar='sweep configuration',
+                        type=str, nargs='?',
+                        help='name of sweep configuration to load from sweep_config.json',
+                        default='plots')
+
+    args = parser.parse_args()
+    do_sweep(args.out, args.config)
+
+
+if __name__ == '__main__':
+    main()
