@@ -1,6 +1,8 @@
 import os
+import sys
 import json
 import argparse
+import traceback
 
 import numpy as np
 from joblib import Parallel, delayed
@@ -16,75 +18,78 @@ def do_sweep(out_dir, config_name, n_jobs):
 
     path_fmt = PlotSetup(out_dir, config_name)
 
-    with open('sweep_configs.json') as f:
+    with open('sweep_config.json') as f:
         sweep_config = json.load(f)[config_name]
-    all_points = prep_points(out_dir, sweep_config)
+    all_points = prep_points(path_fmt, sweep_config)
 
-    sure_run(path_fmt, all_points, 0, n_jobs=n_jobs)
+    sure_run(all_points, 0, n_jobs=n_jobs)
 
 
-def prep_points(out_dir, sweep_config):
+def prep_points(path_fmt, sweep_config):
     """Prepare all folders and the configurations for each of the points in the sweep"""
-    point_config = json.dumps(sweep_config['point_config'])
 
-    x_axis = np.linspace(**sweep_config['x-var'])
-    y_axis = np.linspace(**sweep_config['y-var'])
+    x_axis = np.linspace(**sweep_config['point_config']['x-var'])
+    y_axis = np.linspace(**sweep_config['point_config']['y-var'])
     x_mesh, y_mesh = np.meshgrid(x_axis, y_axis)
 
     points = []
-    for i, (x, y) in enumerate(zip(np.flatten(x_mesh), np.flatten(y_mesh))):
-        conf_here = json.loads(point_config.replace('<x-var>', x).replace('<y-var>', y))
+    conf_str = json.dumps(sweep_config)
+    for i, xy in enumerate(zip(x_mesh.flatten(), y_mesh.flatten())):
+        x, y = xy[0], xy[1]
+        conf_here = json.loads(conf_str.replace('"<x-var>"', str(x)).replace('"<y-var>"', str(y)))
 
-        point_name =  f'Point {i}'
-        point_dir = os.path.join(out_dir, point_name)
-        os.mkdir(point_dir)
-        with open(os.path.join(point_dir, 'config.json'), 'w') as f:
-            json.dump(conf_here, f)
-        points.append(point_name)
+        point_name = f'Point {i}'
+        point_fmt = PlotSetup(path_fmt.directory, point_name)
+        with open(point_fmt.file_name('config', 'json'), 'w') as f:
+            json.dump(conf_here, f, indent=2)
+        points.append(point_fmt)
     return points
 
 
-def sure_run(path_fmt, point_list, tries, n_jobs=-1):
+def sure_run(point_fmts, tries, n_jobs=-1):
     """Run all points, recursively re-trying to run points that fail"""
     # Send command to run all points in parallel
-    point_paths = [os.path.join(path_fmt, point_list)]
     Parallel(n_jobs=n_jobs, verbose=20)(
-        delayed(model)(p, path_fmt) for p in point_paths
+        delayed(run_point)(p) for p in point_fmts
     )
 
     # Check which points failed to finish
-    incomplete = check_complete(path_fmt)
+    incomplete = check_complete(point_fmts)
 
     # Recursively run all incomplete points
     if tries <= MAX_TRIES and incomplete:
         tries += 1
-        sure_run(path_fmt, incomplete, tries)
+        sure_run(point_fmts, incomplete, tries)
 
 
-def run_point(point_path, fmt):
+def run_point(point_fmt):
     # This function should be run in parallel
 
     # Load config from file
-    with open(os.path.join(point_path, 'config.json')) as f:
+    with open(point_fmt.file_name('config', 'json')) as f:
         config = json.load(f)
 
     # Run the simulation at this point and save the data
-    osc, time, fmt = model(config, fmt)
+    try:
+        osc, time, fmt = model(config, point_fmt)
+        err_message = None
+    except Exception as e:
+        osc, time, fmt = [], [], []
+        err_message = ''.join(traceback.format_exception(*sys.exc_info()))
 
     # Check that the point has been run successfully
-    if time[-1] >= config['time']:
-        with open(fmt.file_name('completion', 'txt')) as f:
+    if np.any(time) and time[-1] >= config['time']:
+        with open(point_fmt.file_name('completion', 'txt'), 'w') as f:
             f.write('Simulation Completed')
     else:
-        error_msg = 'Error unknown!'
-        with open(fmt.file_name('completion', 'txt')) as f:
+        error_msg = err_message if err_message else 'Error Unknown!'
+        with open(point_fmt.file_name('completion', 'txt'), 'w') as f:
             f.write(f'Simulation failed to complete!\n    {error_msg}')
 
 
-def check_complete(path_fmt):
+def check_complete(point_fmts):
 
-    folders_here = [f for f in path_fmt.directory.iterdir() if f.is_dir()]
-    incomplete = [f for f in folders_here if not os.path.exists(os.path.join(f, 'completion.txt'))]
+    incomplete = [fmt for fmt in point_fmts if not os.path.exists(fmt.file_name('completion', 'txt'))]
     return incomplete
 
 

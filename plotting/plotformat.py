@@ -37,6 +37,12 @@ class PlotSetup(object):
 
         return os.path.join(self.directory, file)
 
+    def mkdir(self, new_dir):
+        """Make a new directory with the given name inside this directory"""
+        new_path = os.path.join(self.directory, new_dir)
+        os.mkdir(new_path)
+        return new_path
+
     def make_file_path(self):
         """Safely build a directory including the timestamp only if necessary"""
         self.directory = os.path.join(self.base, self.label)
