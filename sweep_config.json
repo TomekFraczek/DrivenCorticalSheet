@@ -54,7 +54,7 @@
       },
       "driver": {
         "use_driver": true,
-        "driver_weight": "<y-var>"
+        "strength": "<y-var>"
       }
     },
     "gain_ratio": "<x-var>",
