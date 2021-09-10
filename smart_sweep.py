@@ -12,7 +12,7 @@ from main import model, save_data, plot
 MAX_TRIES = 5
 
 
-def do_sweep(out_dir, config_name):
+def do_sweep(out_dir, config_name, n_jobs):
 
     path_fmt = PlotSetup(out_dir, config_name)
 
@@ -20,7 +20,7 @@ def do_sweep(out_dir, config_name):
         sweep_config = json.load(f)[config_name]
     all_points = prep_points(out_dir, sweep_config)
 
-    sure_run(path_fmt, all_points, 0)
+    sure_run(path_fmt, all_points, 0, n_jobs=n_jobs)
 
 
 def prep_points(out_dir, sweep_config):
@@ -102,8 +102,13 @@ def main():
                         help='name of sweep configuration to load from sweep_config.json',
                         default='plots')
 
+    parser.add_argument('--jobs', metavar='num jobs',
+                        type=int, nargs='?',
+                        help='Number of parallel jobs to run',
+                        default=-1)
+
     args = parser.parse_args()
-    do_sweep(args.out, args.config)
+    do_sweep(args.out, args.config, args.jobs)
 
 
 if __name__ == '__main__':
