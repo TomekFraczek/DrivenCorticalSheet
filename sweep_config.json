@@ -1,5 +1,21 @@
 {
-  "gain_sweep": {
+  "connection_sweep": {
+    "point_config": {
+      "repetitions": 5,
+      "x-var": {
+        "start": 0,
+        "stop": 10,
+        "num": 5,
+        "endpoint": true
+      },
+      "y-var": {
+        "start": 0,
+        "stop": 10,
+        "num": 5,
+        "endpoint": true
+      }
+    },
+
     "output_dir_name": "placeholder",
     "save_numpy": true,
 
@@ -13,7 +29,7 @@
     "inspect_t_seconds": 0.35,
     "inspect_t_samples": 3,
 
-    "sqrt_nodes": 20,
+    "sqrt_nodes": 64,
     "time": 5,
 
     "system": {
@@ -23,7 +39,7 @@
         "high": 6.28318
       },
       "interaction" : {
-        "beta": "<y-var>",
+        "beta": 0.6,
         "r":0
       },
       "kernel" : {
@@ -37,8 +53,8 @@
         "c": 0.4
       },
       "driver": {
-        "use_driver": false,
-        "driver_weight":0
+        "use_driver": true,
+        "driver_weight": "<y-var>"
       }
     },
     "gain_ratio": "<x-var>",
