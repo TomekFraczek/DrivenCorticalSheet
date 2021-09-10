@@ -38,10 +38,10 @@ def prep_points(path_fmt, sweep_config):
         x, y = xy[0], xy[1]
         conf_here = json.loads(conf_str.replace('"<x-var>"', str(x)).replace('"<y-var>"', str(y)))
 
-        point_name = f'Point {i}'
+        point_name = f'Point{i}'
         point_fmt = PlotSetup(path_fmt.directory, point_name)
         for rep in range(sweep_config['point_config']['repetitions']):
-            rep_fmt = PlotSetup(point_fmt.directory, f'Rep {i}')
+            rep_fmt = PlotSetup(point_fmt.directory, f'Rep{rep}')
             with open(rep_fmt.file_name('config', 'json'), 'w') as f:
                 json.dump(conf_here, f, indent=2)
             all_runs.append(rep_fmt)
