@@ -54,7 +54,8 @@
       },
       "driver": {
         "use_driver": true,
-        "strength": "<y-var>"
+        "strength": "<y-var>",
+        "freq": 0.25
       }
     },
     "gain_ratio": "<x-var>",
