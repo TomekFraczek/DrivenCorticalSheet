@@ -4,3 +4,4 @@ matplotlib==3.3.4
 imageio
 python-slugify 
 progressbar2
+joblib
