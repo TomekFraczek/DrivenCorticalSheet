@@ -32,7 +32,7 @@ def prep_points(path_fmt, sweep_config):
     y_axis = np.linspace(**sweep_config['point_config']['y-var'])
     x_mesh, y_mesh = np.meshgrid(x_axis, y_axis)
 
-    points = []
+    all_runs = []
     conf_str = json.dumps(sweep_config)
     for i, xy in enumerate(zip(x_mesh.flatten(), y_mesh.flatten())):
         x, y = xy[0], xy[1]
@@ -40,10 +40,12 @@ def prep_points(path_fmt, sweep_config):
 
         point_name = f'Point {i}'
         point_fmt = PlotSetup(path_fmt.directory, point_name)
-        with open(point_fmt.file_name('config', 'json'), 'w') as f:
-            json.dump(conf_here, f, indent=2)
-        points.append(point_fmt)
-    return points
+        for rep in range(sweep_config['point_config']['repetitions']):
+            rep_fmt = PlotSetup(point_fmt.directory, f'Rep {i}')
+            with open(rep_fmt.file_name('config', 'json'), 'w') as f:
+                json.dump(conf_here, f, indent=2)
+            all_runs.append(rep_fmt)
+    return all_runs
 
 
 def sure_run(point_fmts, tries, n_jobs=-1):
