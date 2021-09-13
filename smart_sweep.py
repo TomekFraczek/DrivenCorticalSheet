@@ -7,7 +7,7 @@ import traceback
 import numpy as np
 from joblib import Parallel, delayed
 
-from plotting.plotformat import PlotSetup
+from plotting.plotformat import PlotSetup, from_existing
 from main import model, save_data, plot
 
 
@@ -23,6 +23,13 @@ def do_sweep(out_dir, config_name, n_jobs):
     all_points = prep_points(path_fmt, sweep_config)
 
     sure_run(all_points, 0, n_jobs=n_jobs)
+
+
+def redo_sweep(out_dir, n_jobs):
+    """Restart a sweep that might have been ended prematurely"""
+    existing = from_existing(out_dir)
+    incomplete = check_complete(existing)
+    sure_run(incomplete, 0, n_jobs=n_jobs)
 
 
 def prep_points(path_fmt, sweep_config):
@@ -113,6 +120,9 @@ def main():
                         type=int, nargs='?',
                         help='Number of parallel jobs to run',
                         default=-1)
+
+    parser.add_argument('--restart', action='store_true',
+                        help='Whether to try and restart a previously started run')
 
     args = parser.parse_args()
     do_sweep(args.out, args.config, args.jobs)

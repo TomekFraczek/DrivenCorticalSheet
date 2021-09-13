@@ -8,13 +8,24 @@ from slugify import slugify
 from datetime import datetime
 
 
+def from_existing(source_dir):
+
+    plot_dirs = []
+    for root, dirs, files in os.walk(source_dir):
+        for name in dirs:
+            if os.path.exists(os.path.join(root, name, 'config.json')):
+                plot_dirs.append(PlotSetup(root, name, build_new=False))
+    return plot_dirs
+
+
 class PlotSetup(object):
-    def __init__(self, base_folder='plots', label='', readonly=False):
+    def __init__(self, base_folder='plots', label='', readonly=False, build_new=True):
         self.base = base_folder
         self.label = label
         self.directory = None
         self.timestamp = datetime.now().strftime("%y%m%d_%H-%M-%S")
         self.readonly = readonly
+        self.build_new = build_new
 
         self.make_file_path()  # creates self.directory
         self.set_mpl_params()  # modify specific mpl.rcParams
@@ -46,11 +57,12 @@ class PlotSetup(object):
     def make_file_path(self):
         """Safely build a directory including the timestamp only if necessary"""
         self.directory = os.path.join(self.base, self.label)
-        try:
-            os.makedirs(self.directory, exist_ok=self.readonly)
-        except FileExistsError:
-            self.label = f'{self.label}_{self.timestamp}'
-            self.make_file_path()
+        if self.build_new:
+            try:
+                os.makedirs(self.directory, exist_ok=self.readonly)
+            except FileExistsError:
+                self.label = f'{self.label}_{self.timestamp}'
+                self.make_file_path()
 
     @staticmethod
     def set_mpl_params():
