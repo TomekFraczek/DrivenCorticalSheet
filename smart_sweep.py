@@ -125,7 +125,11 @@ def main():
                         help='Whether to try and restart a previously started run')
 
     args = parser.parse_args()
-    do_sweep(args.out, args.config, args.jobs)
+
+    if args.restart:
+        redo_sweep(args.out, args.jobs)
+    else:
+        do_sweep(args.out, args.config, args.jobs)
 
 
 if __name__ == '__main__':
