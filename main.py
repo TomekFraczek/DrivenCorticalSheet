@@ -12,12 +12,7 @@ from modeling.model import KuramotoSystem, plot_interaction
 from plotting.animate import Animator
 from plotting.plot_solution import PlotSetup
 
-
-CONFIG_NAME = 'config', 'json'
-PHASES_NAME = 'oscillators', 'npy'
-NOTES_NAME = 'notes', 'txt'
-TIME_NAME = 'time', 'npy'
-LOG_NAME = 'log', 'txt'
+from plotting import CONFIG_NAME, PHASES_NAME, NOTES_NAME, TIME_NAME, LOG_NAME, load_data
 
 
 def model(config, fmt: (str, PlotSetup) = 'simulation'):
@@ -86,17 +81,6 @@ def save_data(fmt, config, osc_state=None, time=None, solver_notes=None):
         np.save(fmt.file_name(*TIME_NAME), time)
 
     return fmt
-
-
-def load_data(data_folder):
-    """Load the data (result of a simulation run) from the target directory"""
-    fmt = PlotSetup(base_folder=data_folder, readonly=True)
-    with open(fmt.file_name(*CONFIG_NAME)) as f:
-        config = json.load(f)
-    osc_state = np.load(fmt.file_name(*PHASES_NAME))
-    time = np.load(fmt.file_name(*TIME_NAME))
-
-    return config, osc_state, time, fmt
 
 
 def plot(config=None, osc_states=None, time=None, data_folder=None, fmt=None, cleanup=True):

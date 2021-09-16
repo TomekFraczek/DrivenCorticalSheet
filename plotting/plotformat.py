@@ -4,12 +4,13 @@ plus common mpl.rcparams modifications for font and line size
 """
 import os
 import matplotlib as mpl
+import numpy as np
 from slugify import slugify
 from datetime import datetime
 
 
 def from_existing(source_dir):
-
+    """Find all the simulation directories inside the given directory"""
     plot_dirs = []
     for root, dirs, files in os.walk(source_dir):
         for name in dirs:
@@ -38,6 +39,15 @@ class PlotSetup(object):
     @staticmethod
     def clean(text: str):
         return text     # we trust our users right? lol   slugify(text)
+
+    def has_file(self, filename, extension=None):
+        files_here = os.listdir(self.directory)
+
+        if extension is None:
+            exists = np.any([filename in f for f in files_here])
+        else:
+            exists = os.path.exists(self.file_name(filename, extension))
+        return exists
 
     def file_name(self, title: str, extension: str = ''):
 

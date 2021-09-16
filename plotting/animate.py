@@ -4,6 +4,7 @@ make gif from selected folder
 credit to https://github.com/dm20/gif-maker
 """
 import imageio
+import json
 import os
 import re
 import shutil
@@ -16,6 +17,8 @@ from matplotlib.ticker import StrMethodFormatter
 from plotting.plotformat import PlotSetup
 from progressbar import progressbar
 from datetime import datetime
+from plotting import load_data
+
 
 # gif_maker many thanks
 # https://stackoverflow.com/questions/753190/programmatically-generate-video-or-animated-gif-in-python
@@ -170,6 +173,19 @@ class Animator(object):
         ax.xaxis.set_major_locator(mpl.ticker.MultipleLocator(base=self.shape[0]/4))
         ax.yaxis.set_major_locator(mpl.ticker.MultipleLocator(base=self.shape[1]/4))
         # plt.tight_layout()
+
+
+def animate_one(data_source):
+    """Run default animation on a single directory"""
+
+    with open(data_source.file_name('config', 'json')) as f:
+        config = json.load(f)
+
+    osc_states, time, fmt = load_data(data_source)
+
+    vid = Animator(config, data_source)
+    vid.animate(osc_states, time, cleanup=True)
+
 
 # TODO enable zip img
     #     try:
