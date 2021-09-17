@@ -178,10 +178,7 @@ class Animator(object):
 def animate_one(data_source):
     """Run default animation on a single directory"""
 
-    with open(data_source.file_name('config', 'json')) as f:
-        config = json.load(f)
-
-    osc_states, time, fmt = load_data(data_source)
+    config, osc_states, time, fmt = load_data(data_source)
 
     vid = Animator(config, data_source)
     vid.animate(osc_states, time, cleanup=True)
