@@ -126,5 +126,69 @@
 
     "external_input":false,
     "external_input_weight":0
+  },
+  "undriven_sweep": {
+    "point_config": {
+      "repetitions": 5,
+      "x-var": {
+        "start": 0,
+        "stop": 7,
+        "num": 10,
+        "endpoint": true
+      },
+      "y-var": {
+        "start": 0,
+        "stop": 0.9,
+        "num": 10,
+        "endpoint": true
+      }
+    },
+
+    "output_dir_name": "placeholder",
+    "save_numpy": true,
+
+    "ODE_method": "RK45",
+    "continuous_soln": true,
+    "max_delta_t":0.1,
+    "zero_ics": false,
+    "frames": 100,
+    "frame_rate": 0.10,
+    "interpolate_plot": false,
+    "inspect_t_seconds": 0.35,
+    "inspect_t_samples": 3,
+
+    "sqrt_nodes": 90,
+    "time": 5,
+
+    "system": {
+      "initial": {
+        "type": "uniform",
+        "low": 0,
+        "high": 6.28318
+      },
+      "interaction" : {
+        "beta": "<y-var>",
+        "r":0
+      },
+      "kernel" : {
+        "s":3,
+        "width": 8
+      },
+      "normalize_kernel": false,
+      "natural_freq": {
+        "a": 1,
+        "b": 0,
+        "c": 0.4
+      },
+      "driver": {
+        "use_driver": true,
+        "strength": 0,
+        "freq": 0.25
+      }
+    },
+    "gain_ratio": "<x-var>",
+
+    "external_input":false,
+    "external_input_weight":0
   }
 }
