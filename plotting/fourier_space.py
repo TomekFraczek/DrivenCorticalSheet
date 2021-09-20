@@ -24,7 +24,8 @@ def fourier_data_1d(data_src):
 
     avg_psds = np.array(avg_psds)
 
-    np.save(data_src.file_name('1d_fourier_data', 'npy'), avg_psds)
+    saveable = np.array([*np.meshgrid(time, freqs), avg_psds])
+    np.save(data_src.file_name('1d_fourier_data', 'npy'), saveable)
     return avg_psds, time, freqs
 
 
@@ -39,6 +40,7 @@ def fourier_1d(data_src):
     plt.ylabel('Frequency')
     plt.xlabel('Time (s)')
     plt.tight_layout()
+
 
     plt.savefig(data_src.file_name('fourier 1d', 'png'))
 
