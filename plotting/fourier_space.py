@@ -34,10 +34,11 @@ def fourier_1d(data_src):
     X, Y = np.meshgrid(time, freqs)
 
     fig = plt.figure()
-    plt.pcolormesh(avg_psds.T, X, Y)
+    plt.pcolormesh(X, Y, avg_psds.T)
     plt.colorbar()
-    plt.ylabel('Time (s)')
-    plt.xlabel('Frequency')
+    plt.ylabel('Frequency')
+    plt.xlabel('Time (s)')
+    plt.tight_layout()
 
     plt.savefig(data_src.file_name('fourier 1d', 'png'))
 
