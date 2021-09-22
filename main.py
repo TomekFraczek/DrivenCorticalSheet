@@ -38,12 +38,9 @@ def model(config, fmt: (str, PlotSetup) = 'simulation'):
 
     try:
         solution = kuramoto.solve(
-            (0, time),
-            config['ODE_method'],  # too stiff for 'RK45', use 'LSODA',‘BDF’,'Radau'
-            config['continuous_soln'],
-            time_eval,
-            config['max_delta_t'],
-            config['zero_ics'],
+            time_scale=(0, time),
+            time_eval=time_eval,
+            **config['solution']
         )
         osc_state = solution.y.reshape((nodes_side, nodes_side, solution.t.shape[0]))
         time = solution.t

@@ -19,10 +19,13 @@
     "output_dir_name": "placeholder",
     "save_numpy": true,
 
-    "ODE_method": "LSODA",
-    "continuous_soln": true,
-    "max_delta_t":0.1,
-    "zero_ics": false,
+    "solution": {
+      "ODE_method": "LSODA",
+      "continuous_soln": true,
+      "max_delta_t":0.1,
+      "min_delta_t": 0.0001,
+      "zero_ics": false
+    },
     "frames": 100,
     "frame_rate": 0.10,
     "interpolate_plot": false,
@@ -82,11 +85,14 @@
 
     "output_dir_name": "placeholder",
     "save_numpy": true,
+    "solution": {
+      "ODE_method": "LSODA",
+      "continuous_soln": true,
+      "max_delta_t":0.1,
+      "min_delta_t": 0.0001,
+      "zero_ics": false
+    },
 
-    "ODE_method": "LSODA",
-    "continuous_soln": true,
-    "max_delta_t":0.1,
-    "zero_ics": false,
     "frames": 100,
     "frame_rate": 0.10,
     "interpolate_plot": false,
@@ -147,10 +153,13 @@
     "output_dir_name": "placeholder",
     "save_numpy": true,
 
-    "ODE_method": "RK45",
-    "continuous_soln": true,
-    "max_delta_t":0.1,
-    "zero_ics": false,
+     "solution": {
+      "ODE_method": "LSODA",
+      "continuous_soln": true,
+      "max_delta_t":0.1,
+      "min_delta_t": 0.0001,
+      "zero_ics": false
+    },
     "frames": 100,
     "frame_rate": 0.10,
     "interpolate_plot": false,
