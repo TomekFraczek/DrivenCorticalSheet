@@ -190,7 +190,7 @@
         "c": 0.4
       },
       "driver": {
-        "use_driver": true,
+        "use_driver": false,
         "strength": 0,
         "freq": 0.25
       }
