@@ -1,3 +1,5 @@
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -57,7 +59,7 @@ def fourier_1d(data_src):
     X, Y = np.meshgrid(time, freqs)
 
     fig = plt.figure()
-    plt.pcolormesh(X, Y, avg_psds.T)
+    plt.pcolormesh(X, Y, avg_psds.T, shading='nearest')
     plt.colorbar()
     plt.ylabel('Frequency')
     plt.xlabel('Time (s)')
@@ -76,7 +78,7 @@ def fourier_2d(data_src):
     for i in range(n_states):
         plt.subplot(2, 3, i+1, aspect=1.0)
         state_id = round((i / n_states) * len(time))
-        plt.pcolormesh(fx, fy, state_ffts[state_id, :, :])
+        plt.pcolormesh(fx, fy, state_ffts[state_id, :, :], shading='nearest')
         plt.xlabel('X Frequencies')
         plt.ylabel('Y Frequencies')
         plt.colorbar()
@@ -84,3 +86,22 @@ def fourier_2d(data_src):
 
     plt.tight_layout()
     plt.savefig(data_src.file_name('fourier 2d', 'png'))
+
+
+def psd_width(data_src):
+
+    # Ensure that the required data has been prepared
+    if not data_src.has_file('1d_fourier_data', extension='npy'):
+        fourier_1d(data_src)
+
+    psd_data = np.load(data_src.file_name('1d_fourier_data', 'npy'), allow_pickle=True)
+    times, freqs, psds = psd_data[0], psd_data[1], psd_data[2]
+
+    end_psd = psds[-1, :]
+    end_freqs = freqs[:, -1]
+
+    average = np.average(end_freqs, weights=end_psd)
+    variance = np.average((end_freqs - average) ** 2, weights=end_psd)
+
+    return average, variance
+
