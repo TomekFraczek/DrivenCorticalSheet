@@ -3,14 +3,15 @@ import argparse
 
 from plotting.plotformat import from_existing
 from plotting.animate import animate_one
-from plotting.fourier_space import fourier_1d
+from plotting.fourier_space import fourier_1d, fourier_2d
 
 
 # Collection of all the functions to plot on each individual directory
 # Each entry should be the name of the primary output file as a key, with the function as the value
 PLOT_FUNCTIONS = {
     'animation': animate_one,
-    'fourier 1d': fourier_1d
+    'fourier 1d': fourier_1d,
+    'fourier 2d': fourier_2d
 }
 
 
