@@ -1,6 +1,7 @@
 import os
 import argparse
 
+from matplotlib import pyplot as plt
 from plotting.plotformat import from_existing
 from plotting.animate import animate_one
 from plotting.fourier_space import fourier_1d, fourier_2d
@@ -25,6 +26,7 @@ def plot_individual(source_dir):
         for plot_name, plot_func in PLOT_FUNCTIONS.items():
             if not sim_folder.has_file(plot_name):
                 plot_func(sim_folder)
+                plt.close()
 
 
 if __name__ == '__main__':
