@@ -39,6 +39,9 @@ def prep_points(path_fmt, sweep_config):
     y_axis = np.linspace(**sweep_config['point_config']['y-var'])
     x_mesh, y_mesh = np.meshgrid(x_axis, y_axis)
 
+    with open(path_fmt.file_name('sweep_config', 'json'), 'w') as conf:
+        json.dump(sweep_config, conf)
+
     all_runs = []
     conf_str = json.dumps(sweep_config)
     for i, xy in enumerate(zip(x_mesh.flatten(), y_mesh.flatten())):
