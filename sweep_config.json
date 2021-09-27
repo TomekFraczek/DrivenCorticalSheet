@@ -177,7 +177,7 @@
       },
       "interaction" : {
         "beta": "<y-var>",
-        "r":0
+        "r": 0.25
       },
       "kernel" : {
         "s":3,
