@@ -100,8 +100,6 @@ def run_point(point_fmt):
     except Exception as e:
         osc, time, fmt = [], [], []
         err_message = ''.join(traceback.format_exception(*sys.exc_info()))
-    else:
-        time, err_message = [], 'Unexpected State'
     finally:
         end_time = datetime.now()
         run_time = end_time - start_time
