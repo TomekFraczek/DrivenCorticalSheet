@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import random
 import argparse
 import traceback
 
@@ -58,8 +59,16 @@ def prep_points(path_fmt, sweep_config):
     return all_runs
 
 
+def scramble(orig):
+    dest = orig[:]
+    random.shuffle(dest)
+    return dest
+
+
 def sure_run(point_fmts, tries, n_jobs=-1):
     """Run all points, recursively re-trying to run points that fail"""
+    point_fmts = scramble(point_fmts)
+
     # Send command to run all points in parallel
     Parallel(n_jobs=n_jobs, verbose=20)(
         delayed(run_point)(p) for p in point_fmts
