@@ -5,6 +5,8 @@ import random
 import argparse
 import traceback
 
+from datetime import datetime
+
 import numpy as np
 from joblib import Parallel, delayed
 
@@ -91,21 +93,29 @@ def run_point(point_fmt):
         config = json.load(f)
 
     # Run the simulation at this point and save the data
+    start_time = datetime.now()
     try:
         osc, time, fmt = model(config, point_fmt)
         err_message = None
     except Exception as e:
         osc, time, fmt = [], [], []
         err_message = ''.join(traceback.format_exception(*sys.exc_info()))
+    else:
+        time, err_message = [], 'Unexpected State'
+    finally:
+        end_time = datetime.now()
+        run_time = end_time - start_time
 
     # Check that the point has been run successfully
-    if np.any(time) and time[-1] >= config['time']:
+    if time and np.any(time) and time[-1] >= config['time']:
         with open(point_fmt.file_name('completion', 'txt'), 'w') as f:
-            f.write('Simulation Completed')
+            f.write('Simulation Completed\n\n')
+            f.write(f'Run Time: {run_time}')
     else:
         error_msg = err_message if err_message else 'Error Unknown!'
         with open(point_fmt.file_name('completion', 'txt'), 'w') as f:
-            f.write(f'Simulation failed to complete!\n    {error_msg}')
+            f.write(f'Simulation failed to complete!\n    {error_msg}\n\n')
+            f.write(f'Run Time: {run_time}')
 
 
 def check_complete(point_fmts):
