@@ -66,40 +66,40 @@
     "external_input":false,
     "external_input_weight":0
   },
-    "test_sweep": {
+  "test_sweep": {
     "point_config": {
-      "repetitions": 1,
+      "repetitions": 2,
       "x-var": {
         "start": 0,
-        "stop": 8,
-        "num": 4,
+        "stop": 7,
+        "num": 2,
         "endpoint": true
       },
       "y-var": {
         "start": 0,
-        "stop": 0.8,
-        "num": 4,
+        "stop": 0.9,
+        "num": 2,
         "endpoint": true
       }
     },
 
     "output_dir_name": "placeholder",
     "save_numpy": true,
+
     "solution": {
-      "ODE_method": "LSODA",
+      "ode_method": "RK45",
       "continuous_soln": true,
       "max_delta_t":0.1,
       "min_delta_t": 0.0001,
       "zero_ics": false
     },
-
     "frames": 100,
     "frame_rate": 0.10,
     "interpolate_plot": false,
     "inspect_t_seconds": 0.35,
     "inspect_t_samples": 3,
 
-    "sqrt_nodes": 64,
+    "sqrt_nodes": 30,
     "time": 5,
 
     "system": {
@@ -110,7 +110,7 @@
       },
       "interaction" : {
         "beta": "<y-var>",
-        "r":0
+        "r": 0.25
       },
       "kernel" : {
         "s":3,
@@ -123,7 +123,7 @@
         "c": 0.4
       },
       "driver": {
-        "use_driver": true,
+        "use_driver": false,
         "strength": 0,
         "freq": 0.25
       }
@@ -154,7 +154,7 @@
     "save_numpy": true,
 
      "solution": {
-      "ODE_method": "LSODA",
+      "ode_method": "LSODA",
       "continuous_soln": true,
       "max_delta_t":0.1,
       "min_delta_t": 0.0001,

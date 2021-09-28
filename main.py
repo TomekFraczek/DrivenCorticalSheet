@@ -46,7 +46,7 @@ def model(config, fmt: (str, PlotSetup) = 'simulation'):
         time = solution.t
         msg = solution.message
     except Exception as e:
-        print('Integration failed!')
+        print(f'Integration failed!: {e.args[0]}')
         raise e
 
     if config['save_numpy']:

@@ -90,7 +90,7 @@ class KuramotoSystem(object):
     def solve(self,
               time_scale: tuple = (0, 10),
               ode_method: str = 'LSODA',  # 'Radau' works too, RK45 not so much
-              continuous_fn=True,
+              continuous_soln=True,
               time_eval: np.ndarray = None,
               max_delta_t: float = 0.1,
               min_delta_t: float = 0,
@@ -112,7 +112,7 @@ class KuramotoSystem(object):
                          max_step=max_delta_t,
                          min_step=min_delta_t,
                          method=ode_method,
-                         dense_output=continuous_fn,
+                         dense_output=continuous_soln,
                          vectorized=False
                          )
 
