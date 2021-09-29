@@ -87,10 +87,10 @@
     "save_numpy": true,
 
     "solution": {
-      "ode_method": "RK45",
-      "continuous_soln": true,
+      "ode_method": "LSODA",
+      "continuous_soln": false,
       "max_delta_t":0.1,
-      "min_delta_t": 0.0001,
+      "min_delta_t": 0.005,
       "zero_ics": false
     },
     "frames": 100,
@@ -155,7 +155,7 @@
 
      "solution": {
       "ode_method": "LSODA",
-      "continuous_soln": true,
+      "continuous_soln": false,
       "max_delta_t":0.1,
       "min_delta_t": 0.005,
       "zero_ics": false
