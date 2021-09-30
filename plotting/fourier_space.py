@@ -35,18 +35,22 @@ def fourier_data_1d(data_src):
 def fourier_data_2d(data_src):
     config, osc_states, time, _ = load_data(data_src)
 
+    n_osc = osc_states[:, :, 0].shape[-1]
+    half = int(n_osc/2)
+
     state_psds = []
     for i, t in enumerate(time):
         state = osc_states[:, :, i]
 
         state_fft = fft2(state)
-        state_psd = fftshift(np.real(state_fft * np.conj(state_fft)))
+        state_fft[0, 0] = 0
+        full_state_psd = np.real(state_fft * np.conj(state_fft))
+        state_psd = full_state_psd[:half, :half]
         state_psds.append(state_psd)
 
     state_psds = np.array(state_psds)
-    n_osc = state.shape[-1]
     raw_freqs = fftfreq(n_osc)
-    freqs = np.array([*raw_freqs[round(n_osc/2):], *raw_freqs[:round(n_osc/2)]])
+    freqs = raw_freqs[:half]
 
     saveable = np.array([state_psds, np.meshgrid(freqs, freqs)])
     np.save(data_src.file_name('2d_fourier_data', 'npy'), saveable)
@@ -74,11 +78,14 @@ def fourier_2d(data_src):
     fx, fy = np.meshgrid(freqs, freqs)
 
     fig = plt.figure(figsize=(20, 13))
-    n_states = 6
-    for i in range(n_states):
+    n_states = 7
+    for i in range(n_states-1):
         plt.subplot(2, 3, i+1, aspect=1.0)
         state_id = round((i / n_states) * len(time))
-        plt.pcolormesh(fx, fy, state_ffts[state_id, :, :], shading='nearest')
+        next_state = round((i+1 / n_states) * len(time))
+        these_states = state_ffts[state_id:next_state, :, :]
+        avg_state = np.mean(these_states, axis=0)
+        plt.pcolormesh(fx, fy, avg_state, shading='nearest')
         plt.xlabel('X Frequencies')
         plt.ylabel('Y Frequencies')
         plt.colorbar()
