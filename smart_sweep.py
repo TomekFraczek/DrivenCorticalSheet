@@ -105,7 +105,7 @@ def run_point(point_fmt):
         run_time = end_time - start_time
 
     # Check that the point has been run successfully
-    if time and np.any(time) and time[-1] >= config['time']:
+    if np.any(time) and time[-1] >= config['time']:
         with open(point_fmt.file_name('completion', 'txt'), 'w') as f:
             f.write('Simulation Completed\n\n')
             f.write(f'Run Time: {run_time}')
