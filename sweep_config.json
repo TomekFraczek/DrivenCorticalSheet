@@ -4,14 +4,14 @@
       "repetitions": 5,
       "x-var": {
         "start": 0,
-        "stop": 10,
-        "num": 5,
+        "stop": 5,
+        "num": 10,
         "endpoint": true
       },
       "y-var": {
         "start": 0,
         "stop": 10,
-        "num": 5,
+        "num": 10,
         "endpoint": true
       }
     },
@@ -20,10 +20,10 @@
     "save_numpy": true,
 
     "solution": {
-      "ODE_method": "LSODA",
-      "continuous_soln": true,
+      "ode_method": "LSODA",
+      "continuous_soln": false,
       "max_delta_t":0.1,
-      "min_delta_t": 0.0001,
+      "min_delta_t": 0.005,
       "zero_ics": false
     },
     "frames": 100,
@@ -32,7 +32,7 @@
     "inspect_t_seconds": 0.35,
     "inspect_t_samples": 3,
 
-    "sqrt_nodes": 64,
+    "sqrt_nodes": 90,
     "time": 5,
 
     "system": {
@@ -43,7 +43,7 @@
       },
       "interaction" : {
         "beta": 0.6,
-        "r":0
+        "r": 0.25
       },
       "kernel" : {
         "s":3,
