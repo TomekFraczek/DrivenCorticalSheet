@@ -3,7 +3,7 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-from plotting import load_data
+from plotting.common import load_data, source_data, calc_sweep, calc_sweep_wrapper
 from scipy.signal import welch
 from scipy.fft import fft2, fftfreq, fftshift
 
@@ -28,7 +28,7 @@ def fourier_data_1d(data_src):
     avg_psds = np.array(avg_psds)
 
     saveable = np.array([avg_psds, *np.meshgrid(time, freqs)])
-    np.save(data_src.file_name('1d_fourier_data', 'npy'), saveable)
+    np.save(data_src.file_name('1d_fourier_data', 'npy'), saveable, allow_pickle=False)
     return avg_psds, time, freqs
 
 
@@ -53,12 +53,64 @@ def fourier_data_2d(data_src):
     freqs = raw_freqs[:half]
 
     saveable = np.array([state_psds, np.meshgrid(freqs, freqs)])
-    np.save(data_src.file_name('2d_fourier_data', 'npy'), saveable)
+    np.save(data_src.file_name('2d_fourier_data', 'npy'), saveable, allow_pickle=False)
     return state_psds, time, freqs
 
 
+def dist_cov(x_vals, y_vals, freq_array):
+    """Estimate the covariance matrix from two distributions, not sets of samples"""
+    x_freqs = np.sum(freq_array, axis=0)
+    y_freqs = np.sum(freq_array, axis=1)
+    mean_x = np.average(x_vals, weights=x_freqs)
+    mean_y = np.average(y_vals, weights=y_freqs)
+    cov_xx = weighted_var(x_vals, x_freqs, average=mean_x)
+    cov_yy = weighted_var(y_vals, y_freqs, average=mean_y)
+
+    cov_xy = np.average(
+        np.outer(x_vals-mean_x, y_vals-mean_y),
+        weights=freq_array
+    )
+    return np.array([
+        [cov_xx, cov_xy],
+        [cov_xy, cov_yy]
+    ])
+
+
+def fourier_cov(data_src):
+
+    state_ffts, time, freqs = source_fourier_2d(data_src)
+    covariances = []
+    for i in range(state_ffts.shape[0]):
+        fft = state_ffts[i, :, :]
+        cov_here = dist_cov(freqs, freqs, fft)
+        covariances.append(cov_here)
+
+    np.save(data_src.file_name('fourier_covariances', 'npy'), covariances, allow_pickle=False)
+    return covariances
+
+
+def source_fourier_2d(data_src, load=True):
+    """Get 2d fourier transform data, loading from existing file if possible"""
+    raw_data = source_data(data_src, '2d_fourier_data', fourier_data_2d, load=load)
+    state_ffts, time, freqs = raw_data[0, :, :], raw_data[1, :, :], raw_data[2, :, :]
+    return state_ffts, time, freqs
+
+
+def source_fourier_1d(data_src, load=True):
+    """Get 2d fourier transform data, loading from existing file if possible"""
+    raw_data = source_data(data_src, '1d_fourier_data', fourier_data_2d, load=load)
+    avg_psds, time, freqs = raw_data[0, :, :], raw_data[1, :, :], raw_data[2, :, :]
+    return avg_psds, time, freqs
+
+
+def source_fourier_cov(data_src, load=True):
+    """Get 2d fourier transform data, loading from existing file if possible"""
+    raw_data = source_data(data_src, 'fourier_covariances', fourier_cov, load=load)
+    return raw_data
+
+
 def fourier_1d(data_src):
-    avg_psds, time, freqs = fourier_data_1d(data_src)
+    avg_psds, time, freqs = source_fourier_1d(data_src)
 
     X, Y = np.meshgrid(time, freqs)
 
@@ -73,7 +125,7 @@ def fourier_1d(data_src):
 
 
 def fourier_2d(data_src):
-    state_ffts, time, freqs = fourier_data_2d(data_src)
+    state_ffts, time, freqs = source_fourier_2d(data_src)
 
     fx, fy = np.meshgrid(freqs, freqs)
 
@@ -95,6 +147,25 @@ def fourier_2d(data_src):
     plt.savefig(data_src.file_name('fourier 2d', 'png'))
 
 
+def collapsed_spread(data_src):
+    spread = []
+    covariances = source_fourier_cov(data_src)
+    for i in range(covariances.shape[0]):
+        cov = covariances[0, :, :]
+        spread.append(
+            np.sqrt(cov[0][0]*cov[1][1]-cov[0][1]**2)
+        )
+    np.save(data_src.file_name('2d_fourier_data', 'npy'), np.array(spread), allow_pickle=False)
+    return spread
+
+
+def weighted_var(values, weights, average=None):
+    """Calculate the variance using a weighted mean"""
+    average = np.average(values, weights=weights) if average is None else average
+    variance = np.average((values - average) ** 2, weights=weights)
+    return variance
+
+
 def psd_width(data_src):
 
     # Ensure that the required data has been prepared
@@ -108,7 +179,33 @@ def psd_width(data_src):
     end_freqs = freqs[:, -1]
 
     average = np.average(end_freqs, weights=end_psd)
-    variance = np.average((end_freqs - average) ** 2, weights=end_psd)
+    variance = weighted_var(end_freqs, end_psd, average=average)
 
     return average, variance
+
+
+def plot_psd_width(data_src):
+
+    calc = calc_sweep_wrapper(psd_width, 'psd width')
+    means, vars, xs, ys = source_data(data_src, 'psd width', calc)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    # ax.set_aspect(1)
+    ax.pcolormesh(*np.meshgrid(xs, ys), vars, shading='nearest')
+    plt.xlabel('Gain Ratio')
+    plt.ylabel('Beta')
+    plt.title('Vars')
+    plt.savefig('1D PSD Variances.png')
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    # ax.set_aspect(1)
+    ax.pcolormesh(*np.meshgrid(xs, ys), means, shading='nearest')
+    plt.xlabel('Gain Ratio')
+    plt.ylabel('Beta')
+    plt.title('Means')
+    plt.savefig('1D PSD Averages.png')
+
+    plt.show()
 
