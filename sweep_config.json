@@ -23,7 +23,7 @@
       "ode_method": "LSODA",
       "continuous_soln": false,
       "max_delta_t":0.1,
-      "min_delta_t": 0.005,
+      "min_delta_t": 0.0005,
       "zero_ics": false
     },
     "frames": 100,
@@ -157,7 +157,7 @@
       "ode_method": "LSODA",
       "continuous_soln": false,
       "max_delta_t":0.1,
-      "min_delta_t": 0.005,
+      "min_delta_t": 0.0005,
       "zero_ics": false
     },
     "frames": 100,
