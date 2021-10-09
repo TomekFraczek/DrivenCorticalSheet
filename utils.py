@@ -27,7 +27,7 @@ def remove_file(start_dir, filename):
 
 def failed(start_dir):
     total_runs = 0
-    finished_runs = 0
+    failed_runs = 0
 
     for root, dirs, files in os.walk(start_dir, topdown=False):
         for name in dirs:
@@ -37,7 +37,9 @@ def failed(start_dir):
                 if os.path.exists(completion):
                     with open(completion) as f:
                         if 'failed' in f.read().lower():
-                            finished_runs += 1
+                            failed_runs += 1
+
+    print(f" {failed_runs} out of {total_runs} runs failed to complete successfully")
 
 
 def main():
