@@ -25,6 +25,21 @@ def remove_file(start_dir, filename):
                 os.remove(filepath)
 
 
+def failed(start_dir):
+    total_runs = 0
+    finished_runs = 0
+
+    for root, dirs, files in os.walk(start_dir, topdown=False):
+        for name in dirs:
+            if os.path.exists(os.path.join(root, name, 'config.json')):
+                total_runs += 1
+                completion = os.path.join(root, name, 'completion.txt')
+                if os.path.exists(completion):
+                    with open(completion) as f:
+                        if 'failed' in f.read().lower():
+                            finished_runs += 1
+
+
 def main():
     """Function to run the sweep from the commandline"""
     parser = argparse.ArgumentParser(description='Select model_config scenario & path (optional):')
@@ -38,6 +53,8 @@ def main():
                         help='Remove all files matching filename')
     parser.add_argument('--filename', metavar='filename to use',
                         type=str, nargs='?')
+    parser.add_argument('--failed', action='store_true',
+                        help='Count the number of simulations that failed to complete well')
 
     args = parser.parse_args()
 
@@ -45,6 +62,8 @@ def main():
         completed(args.dir)
     elif args.remove:
         remove_file(args.dir, args.filename)
+    elif args.failed:
+        failed(args.dir)
 
 
 if __name__ == '__main__':
