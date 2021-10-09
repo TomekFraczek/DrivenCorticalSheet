@@ -7,6 +7,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from plotting.animate import animate_one
 from plotting.common import completed_sims
+from plotting.plotformat import PlotSetup
 from plotting.fourier_space import fourier_1d, fourier_2d, plot_psd_width
 
 
@@ -33,7 +34,8 @@ def plot_individual(source_dir):
 
 def plot_sweeps(source_dir):
     """Run all the sweep-wide plotting functions currently listed"""
-    for plot_name, plot_func in PLOT_FUNCTIONS.items():
+    source_dir = PlotSetup(source_dir, build_new=False)
+    for plot_name, plot_func in SWEEP_PLOTS.items():
         plot_func(source_dir)
 
 

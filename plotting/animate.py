@@ -17,7 +17,7 @@ from matplotlib.ticker import StrMethodFormatter
 from plotting.plotformat import PlotSetup
 from progressbar import progressbar
 from datetime import datetime
-from plotting import load_data
+from plotting.common import load_data
 
 
 # gif_maker many thanks

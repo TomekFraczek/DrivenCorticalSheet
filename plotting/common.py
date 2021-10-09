@@ -63,9 +63,9 @@ def calc_sweep(source_dir, function, save_name):
         point_id = re.search('Point([0-9]*)', sim_folder.directory).group(1)
         rep_id = re.search('Rep([0-9]*)', sim_folder.directory).group(1)
         if not all_values:
-            all_values = np.zeros(shape=(n_xs * n_ys, n_reps))
-        for i, v in enumerate(values):
-            all_values[i][int(point_id), int(rep_id)] = values[i]
+            all_values = [np.zeros(shape=(n_xs * n_ys, n_reps)) for k in range(len(values))]
+        for j, v in enumerate(values):
+            all_values[j][int(point_id), int(rep_id)] = values[j]
 
     # Average together the results at each point for each set of calculated values
     shaped_values = []
@@ -75,7 +75,7 @@ def calc_sweep(source_dir, function, save_name):
 
     saveable = np.array([*shaped_values, *np.meshgrid(x_vals, y_vals)])
     np.save(source_dir.file_name(save_name, 'npy'), saveable, allow_pickle=False)
-    return shaped_values
+    return saveable
 
 
 def calc_sweep_wrapper(function, save_name):

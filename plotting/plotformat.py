@@ -12,7 +12,8 @@ from datetime import datetime
 def from_existing(source_dir):
     """Find all the simulation directories inside the given directory"""
     plot_dirs = []
-    for root, dirs, files in os.walk(source_dir):
+    direc = source_dir.directory if hasattr(source_dir, 'has_file') else source_dir
+    for root, dirs, files in os.walk(direc):
         for name in dirs:
             if os.path.exists(os.path.join(root, name, 'config.json')):
                 plot_dirs.append(PlotSetup(root, name, build_new=False))
