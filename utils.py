@@ -25,6 +25,21 @@ def remove_file(start_dir, filename):
                 os.remove(filepath)
 
 
+def cut_failures(start_dir):
+    n_removed = 0
+    for root, dirs, files in os.walk(start_dir, topdown=False):
+        for name in dirs:
+            completion = os.path.join(root, name, 'completion.txt')
+            if os.path.exists(completion):
+                with open(completion) as f:
+                    failure = 'failed' in f.read().lower()
+            if failure:
+                os.remove(completion)
+                n_removed += 1
+
+    print(f"{n_removed} completion files removed!")
+
+
 def failed(start_dir):
     total_runs = 0
     failed_runs = 0
@@ -57,6 +72,8 @@ def main():
                         type=str, nargs='?')
     parser.add_argument('--failed', action='store_true',
                         help='Count the number of simulations that failed to complete well')
+    parser.add_argument('--unfail', action='store_true',
+                        help='Count the number of simulations that failed to complete well')
 
     args = parser.parse_args()
 
@@ -66,6 +83,8 @@ def main():
         remove_file(args.dir, args.filename)
     elif args.failed:
         failed(args.dir)
+    elif args.unfail:
+        cut_failures(args.dir)
 
 
 if __name__ == '__main__':
