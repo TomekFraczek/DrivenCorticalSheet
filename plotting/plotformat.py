@@ -37,6 +37,12 @@ class PlotSetup(object):
         else:
             print(f'Ready to SAVE OUT to: {self.directory}')
 
+    def __repr__(self):
+        return self.directory
+
+    def __str__(self):
+        return self.directory
+
     @staticmethod
     def clean(text: str):
         return text     # we trust our users right? lol   slugify(text)

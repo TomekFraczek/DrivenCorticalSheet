@@ -86,6 +86,7 @@ def fourier_cov(data_src):
         cov_here = dist_cov(freqs, freqs, fft)
         covariances.append(cov_here)
 
+    covariances = np.array(covariances)
     np.save(data_src.file_name('fourier_covariances', 'npy'), covariances, allow_pickle=False)
     return covariances
 
@@ -112,8 +113,9 @@ def source_fourier_cov(data_src, load=True):
 
 def source_spread(data_src, load=True):
     """"""
-    spreads = source_data(data_src, 'fourier_covariances', fourier_cov, load=load)
+    spreads = source_data(data_src, 'collapsed_spread', collapsed_spread, load=load)
     return spreads
+
 
 def fourier_1d(data_src):
     avg_psds, time, freqs = source_fourier_1d(data_src)
@@ -206,7 +208,7 @@ def plot_sweep_spread(data_src):
     plt.xlabel(x_name)
     plt.ylabel(y_name)
     plt.title('Ending Frequency Spreads')
-    plt.savefig(data_src.file_name('1D PSD Variances', 'png'))
+    plt.savefig(data_src.file_name('Sweep Spreads', 'png'))
 
 
 def plot_psd_width(data_src):

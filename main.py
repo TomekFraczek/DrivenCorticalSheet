@@ -12,7 +12,7 @@ from modeling.model import KuramotoSystem, plot_interaction
 from plotting.animate import Animator
 from plotting.plot_solution import PlotSetup
 
-from plotting import CONFIG_NAME, PHASES_NAME, NOTES_NAME, TIME_NAME, LOG_NAME, load_data
+from plotting.common import CONFIG_NAME, PHASES_NAME, NOTES_NAME, TIME_NAME, LOG_NAME, load_sim_results
 
 
 def model(config, fmt: (str, PlotSetup) = 'simulation'):
@@ -85,7 +85,7 @@ def plot(config=None, osc_states=None, time=None, data_folder=None, fmt=None, cl
 
     # No data provided explicitly, need to load from the passed folder
     if data_folder is not None and (config is None or osc_states is None or time is None):
-        config, osc_states, time, fmt = load_data(data_folder)
+        config, osc_states, time, fmt = load_sim_results(data_folder)
 
     # Insufficient info provided, we don't know what to plot!
     elif data_folder is None and (config is None or osc_states is None or time is None):
