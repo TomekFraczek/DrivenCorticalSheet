@@ -21,14 +21,18 @@ def source_data(data_src, filename, calc_func, load=True):
         try:
             raw_data = np.load(data_src.file_name(filename, 'npy'), allow_pickle=False)
         except ValueError:
-            raw_data = calc_func(data_src, load=False)
+            raw_data = calc_func(data_src)
     else:
         raw_data = calc_func(data_src)
 
     return raw_data
 
 
-def load_data(data_folder):
+def load_sim_time(data_src):
+    return np.load(data_src.file_name(*TIME_NAME))
+
+
+def load_sim_results(data_folder):
     """Load the data (result of a simulation run) from the target directory"""
     if hasattr(data_folder, 'make_file_path'):
         fmt = data_folder
@@ -37,7 +41,7 @@ def load_data(data_folder):
     with open(fmt.file_name(*CONFIG_NAME)) as f:
         config = json.load(f)
     osc_state = np.load(fmt.file_name(*PHASES_NAME))
-    time = np.load(fmt.file_name(*TIME_NAME))
+    time = load_sim_time(fmt)
 
     return config, osc_state, time, fmt
 
@@ -83,6 +87,26 @@ def calc_sweep_wrapper(function, save_name):
     def sweep(source_dir):
         return calc_sweep(source_dir, function, save_name)
     return sweep
+
+
+def match_varname(strings, variable):
+    reg = f"\"([a-zA-Z_\-]+)\"[ ]?:[ ]?\"<{variable}-var>\""
+    for s in strings:
+        search = re.search(reg, s)
+        if search:
+            return search.group(1)
+    else:
+        raise KeyError(f'Failed to find the name of the {variable} variable')
+
+
+def var_names(sweep_src):
+    with open(sweep_src.file_name('config', 'json')) as f:
+        lines = f.readlines()
+    x_name = match_varname(lines, 'x')
+    y_name = match_varname(lines, 'y')
+    return x_name, y_name
+
+
 
 
 

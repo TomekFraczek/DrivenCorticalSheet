@@ -3,14 +3,14 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 
-from plotting.common import load_data, source_data, calc_sweep, calc_sweep_wrapper
+from plotting.common import load_sim_results, source_data, calc_sweep_wrapper, var_names, load_sim_time
 from scipy.signal import welch
 from scipy.fft import fft2, fftfreq, fftshift
 
 
 def fourier_data_1d(data_src):
 
-    config, osc_states, time, _ = load_data(data_src)
+    config, osc_states, time, _ = load_sim_results(data_src)
 
     avg_psds = []
     for i, t in enumerate(time):
@@ -29,11 +29,11 @@ def fourier_data_1d(data_src):
 
     saveable = np.array([avg_psds, *np.meshgrid(time, freqs)])
     np.save(data_src.file_name('1d_fourier_data', 'npy'), saveable, allow_pickle=False)
-    return avg_psds, time, freqs
+    return saveable
 
 
 def fourier_data_2d(data_src):
-    config, osc_states, time, _ = load_data(data_src)
+    config, osc_states, time, _ = load_sim_results(data_src)
 
     n_osc = osc_states[:, :, 0].shape[-1]
     half = int(n_osc/2)
@@ -52,9 +52,9 @@ def fourier_data_2d(data_src):
     raw_freqs = fftfreq(n_osc)
     freqs = raw_freqs[:half]
 
-    saveable = np.array([state_psds, np.meshgrid(freqs, freqs)])
+    saveable = np.array([*state_psds, *np.meshgrid(freqs, freqs)])
     np.save(data_src.file_name('2d_fourier_data', 'npy'), saveable, allow_pickle=False)
-    return state_psds, time, freqs
+    return saveable
 
 
 def dist_cov(x_vals, y_vals, freq_array):
@@ -78,7 +78,8 @@ def dist_cov(x_vals, y_vals, freq_array):
 
 def fourier_cov(data_src):
 
-    state_ffts, time, freqs = source_fourier_2d(data_src)
+    state_ffts, x_freqs, _ = source_fourier_2d(data_src)
+    freqs = np.unique(x_freqs)
     covariances = []
     for i in range(state_ffts.shape[0]):
         fft = state_ffts[i, :, :]
@@ -92,14 +93,14 @@ def fourier_cov(data_src):
 def source_fourier_2d(data_src, load=True):
     """Get 2d fourier transform data, loading from existing file if possible"""
     raw_data = source_data(data_src, '2d_fourier_data', fourier_data_2d, load=load)
-    state_ffts, time, freqs = raw_data[0, :, :], raw_data[1, :, :], raw_data[2, :, :]
-    return state_ffts, time, freqs
+    state_ffts, x_freqs, y_freqs = raw_data[:-2, :, :], raw_data[-2, :, :], raw_data[-1, :, :]
+    return state_ffts, x_freqs, y_freqs
 
 
 def source_fourier_1d(data_src, load=True):
     """Get 2d fourier transform data, loading from existing file if possible"""
-    raw_data = source_data(data_src, '1d_fourier_data', fourier_data_2d, load=load)
-    avg_psds, time, freqs = raw_data[0, :, :], raw_data[1, :, :], raw_data[2, :, :]
+    raw_data = source_data(data_src, '1d_fourier_data', fourier_data_1d, load=load)
+    avg_psds, time, freqs = raw_data[:-2, :, :], raw_data[-2, :, :], raw_data[-1, :, :]
     return avg_psds, time, freqs
 
 
@@ -108,6 +109,11 @@ def source_fourier_cov(data_src, load=True):
     raw_data = source_data(data_src, 'fourier_covariances', fourier_cov, load=load)
     return raw_data
 
+
+def source_spread(data_src, load=True):
+    """"""
+    spreads = source_data(data_src, 'fourier_covariances', fourier_cov, load=load)
+    return spreads
 
 def fourier_1d(data_src):
     avg_psds, time, freqs = source_fourier_1d(data_src)
@@ -125,9 +131,8 @@ def fourier_1d(data_src):
 
 
 def fourier_2d(data_src):
-    state_ffts, time, freqs = source_fourier_2d(data_src)
-
-    fx, fy = np.meshgrid(freqs, freqs)
+    state_ffts, fx, fy = source_fourier_2d(data_src)
+    time = load_sim_time(data_src)
 
     fig = plt.figure(figsize=(20, 13))
     n_states = 7
@@ -155,8 +160,13 @@ def collapsed_spread(data_src):
         spread.append(
             np.sqrt(cov[0][0]*cov[1][1]-cov[0][1]**2)
         )
-    np.save(data_src.file_name('2d_fourier_data', 'npy'), np.array(spread), allow_pickle=False)
+    np.save(data_src.file_name('collapsed_spread', 'npy'), np.array(spread), allow_pickle=False)
     return spread
+
+
+def end_spread(data_src):
+    spreads = source_spread(data_src)
+    return spreads[-1]
 
 
 def weighted_var(values, weights, average=None):
@@ -184,25 +194,41 @@ def psd_width(data_src):
     return average, variance
 
 
+def plot_sweep_spread(data_src):
+    calc = calc_sweep_wrapper(end_spread, 'freq spreads')
+    spreads, xs, ys = source_data(data_src, 'freq spreads', calc)
+    x_name, y_name = var_names(data_src)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    # ax.set_aspect(1)
+    ax.pcolormesh(xs, ys, spreads, shading='nearest')
+    plt.xlabel(x_name)
+    plt.ylabel(y_name)
+    plt.title('Ending Frequency Spreads')
+    plt.savefig(data_src.file_name('1D PSD Variances', 'png'))
+
+
 def plot_psd_width(data_src):
 
     calc = calc_sweep_wrapper(psd_width, 'psd width')
     means, vars, xs, ys = source_data(data_src, 'psd width', calc)
+    x_name, y_name = var_names(data_src)
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
     # ax.set_aspect(1)
     ax.pcolormesh(xs, ys, vars, shading='nearest')
-    plt.xlabel('Gain Ratio')
-    plt.ylabel('Beta')
-    plt.title('Vars')
+    plt.xlabel(x_name)
+    plt.ylabel(y_name)
+    plt.title('Ending Frequency Variances')
     plt.savefig(data_src.file_name('1D PSD Variances', 'png'))
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
     # ax.set_aspect(1)
     ax.pcolormesh(xs, ys, means, shading='nearest')
-    plt.xlabel('Gain Ratio')
-    plt.ylabel('Beta')
-    plt.title('Means')
+    plt.xlabel(x_name)
+    plt.ylabel(y_name)
+    plt.title('Ending Frequency Averages')
     plt.savefig(data_src.file_name('1D PSD Averages', 'png'))

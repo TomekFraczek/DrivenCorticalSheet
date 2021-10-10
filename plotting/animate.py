@@ -17,7 +17,7 @@ from matplotlib.ticker import StrMethodFormatter
 from plotting.plotformat import PlotSetup
 from progressbar import progressbar
 from datetime import datetime
-from plotting.common import load_data
+from plotting.common import load_sim_results
 
 
 # gif_maker many thanks
@@ -178,7 +178,7 @@ class Animator(object):
 def animate_one(data_source):
     """Run default animation on a single directory"""
 
-    config, osc_states, time, fmt = load_data(data_source)
+    config, osc_states, time, fmt = load_sim_results(data_source)
 
     vid = Animator(config, data_source)
     vid.animate(osc_states, time, cleanup=True)
