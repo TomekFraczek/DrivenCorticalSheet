@@ -68,7 +68,7 @@ def calc_sweep(source_dir, function, save_name):
         point_id = re.search('Point([0-9]*)', sim_folder.directory).group(1)
         rep_id = re.search('Rep([0-9]*)', sim_folder.directory).group(1)
         if not all_values:
-            n_vals = len(values) if hasattr(values, 'len') else 1
+            n_vals = len(values) if hasattr(values, '__len__') else 1
             all_values = [np.zeros(shape=(n_xs * n_ys, n_reps)) for k in range(n_vals)]
 
         if n_vals > 1:
