@@ -91,6 +91,23 @@ def fourier_cov(data_src):
     return covariances
 
 
+def means_2d(data_src):
+    state_ffts, x_weight, _ = source_fourier_2d(data_src)
+    freqs = np.unique(x_weight)
+    means = []
+    for i in range(state_ffts.shape[0]):
+        fft = state_ffts[i, :, :]
+        x_weight = np.sum(fft, axis=0)
+        y_weight = np.sum(fft, axis=1)
+        mean_x = np.average(freqs, weights=x_weight)
+        mean_y = np.average(freqs, weights=y_weight)
+        means.append([mean_x, mean_y])
+
+    covariances = np.array(means)
+    np.save(data_src.file_name('fourier_2d_means', 'npy'), covariances, allow_pickle=False)
+    return covariances
+
+
 def source_fourier_2d(data_src, load=True):
     """Get 2d fourier transform data, loading from existing file if possible"""
     raw_data = source_data(data_src, '2d_fourier_data', fourier_data_2d, load=load)
@@ -108,6 +125,12 @@ def source_fourier_1d(data_src, load=True):
 def source_fourier_cov(data_src, load=True):
     """Get 2d fourier transform data, loading from existing file if possible"""
     raw_data = source_data(data_src, 'fourier_covariances', fourier_cov, load=load)
+    return raw_data
+
+
+def source_fourier_means(data_src, load=True):
+    """Get 2d fourier transform data, loading from existing file if possible"""
+    raw_data = source_data(data_src, 'fourier_2d_means', means_2d, load=load)
     return raw_data
 
 
@@ -171,6 +194,19 @@ def end_spread(data_src):
     return spreads[-1]
 
 
+def end_xy_vars(data_src):
+    """Return the x and y covariances at this point"""
+    covs = source_fourier_cov(data_src)
+    end = covs[-1, :, :]
+    return end[0, 0], end[1, 1]
+
+
+def end_xy_means(data_src):
+    """Return the x and y mean frequency at the end of this one run"""
+    means = source_fourier_means(data_src)
+    return means[-1]
+
+
 def weighted_var(values, weights, average=None):
     """Calculate the variance using a weighted mean"""
     average = np.average(values, weights=weights) if average is None else average
@@ -194,6 +230,29 @@ def psd_width(data_src):
     variance = weighted_var(end_freqs, end_psd, average=average)
 
     return average, variance
+
+
+def plot_means_2d(data_src):
+    """Plot the evolution of 2d means over time for a single run"""
+    raw_means = source_fourier_means(data_src)
+    time = load_sim_time(data_src)
+    x_means, y_means = raw_means[:, 0], raw_means[:, 1]
+
+    fig = plt.figure(figsize=(10, 7))
+
+    plt.subplot(2, 1, 1)
+    plt.plot(time, x_means)
+    plt.xlabel('Time (s)')
+    plt.ylabel('Mean X Freq')
+
+    plt.subplot(2, 1, 2)
+    plt.plot(time, y_means)
+    plt.xlabel('Time (s)')
+    plt.ylabel('Mean Y Freq')
+
+    plt.tight_layout()
+    plt.savefig(data_src.file_name('FourierMeanEvolution'))
+    plt.close()
 
 
 def plot_sweep_spread(data_src):
@@ -234,3 +293,50 @@ def plot_psd_width(data_src):
     plt.ylabel(y_name)
     plt.title('Ending Frequency Averages')
     plt.savefig(data_src.file_name('1D PSD Averages', 'png'))
+
+
+def plot_end_xy_vars(data_src):
+
+    calc = calc_sweep_wrapper(end_xy_vars, 'end_xy_vars')
+    x_vars, y_vars, xs, ys = source_data(data_src, 'end_xy_vars', calc)
+    x_name, y_name = var_names(data_src)
+
+    fig = plt.figure(figsize=(11, 6))
+
+    ax = fig.add_subplot(1, 2, 1)
+    ax.pcolormesh(xs, ys, x_vars, shading='nearest')
+    plt.xlabel(x_name)
+    plt.ylabel(y_name)
+    plt.title('Ending Frequency x-variance')
+
+    ax = fig.add_subplot(1, 2, 2)
+    ax.pcolormesh(xs, ys, y_vars, shading='nearest')
+    plt.xlabel(x_name)
+    plt.ylabel(y_name)
+    plt.title('Ending Frequency y-variance')
+
+    plt.tight_layout()
+    plt.savefig(data_src.file_name('2D PSD Variances', 'png'))
+
+
+def plot_sweep_end_means(data_src):
+    """Plot the evolution of 2d means over time for a single run"""
+    calc = calc_sweep_wrapper(end_xy_means, 'end xy means')
+    x_means, y_means, xs, ys = source_data(data_src, 'end xy means', calc)
+    x_name, y_name = var_names(data_src)
+
+    fig = plt.figure(figsize=(11, 6))
+
+    ax = fig.add_subplot(1, 2, 1)
+    ax.pcolormesh(xs, ys, x_means, shading='nearest')
+    plt.xlabel(x_name)
+    plt.ylabel(y_name)
+    plt.title('Ending Frequency x-means')
+
+    ax = fig.add_subplot(1, 2, 2)
+    ax.pcolormesh(xs, ys, y_means, shading='nearest')
+    plt.xlabel(x_name)
+    plt.title('Ending Frequency y-means')
+
+    plt.tight_layout()
+    plt.savefig(data_src.file_name('2D PSD Means', 'png'))

@@ -8,7 +8,8 @@ from matplotlib import pyplot as plt
 from plotting.animate import animate_one
 from plotting.common import completed_sims
 from plotting.plotformat import PlotSetup
-from plotting.fourier_space import fourier_1d, fourier_2d, plot_psd_width, plot_sweep_spread
+from plotting.fourier_space import fourier_1d, fourier_2d, plot_psd_width, plot_sweep_spread, plot_end_xy_vars, \
+    plot_sweep_end_means
 
 
 # Collection of all the functions to plot on each individual directory
@@ -20,7 +21,9 @@ PLOT_FUNCTIONS = {
 }
 SWEEP_PLOTS = {
     'psd widths': plot_psd_width,
-    'freq spreads': plot_sweep_spread
+    'freq spreads': plot_sweep_spread,
+    'end xy vars': plot_end_xy_vars,
+    'end xy means': plot_sweep_end_means
 }
 
 
