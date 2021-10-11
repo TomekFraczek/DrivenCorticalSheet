@@ -42,7 +42,7 @@ def cut_failures(start_dir):
 
 def failed(start_dir):
     total_runs = 0
-    failed_runs = 0
+    failed_dirs = []
 
     for root, dirs, files in os.walk(start_dir, topdown=False):
         for name in dirs:
@@ -52,9 +52,13 @@ def failed(start_dir):
                 if os.path.exists(completion):
                     with open(completion) as f:
                         if 'failed' in f.read().lower():
-                            failed_runs += 1
+                            failed_dirs.append(os.path.join(root, name))
 
-    print(f" {failed_runs} out of {total_runs} runs failed to complete successfully")
+    print(f" {len(failed_dirs)} out of {total_runs} runs failed to complete successfully")
+    do_list = input("List? [y/n] >>>")
+    if do_list.lower() == 'y' or do_list.lower() == 'yes':
+        for d in failed_dirs:
+            print(d)
 
 
 def main():
