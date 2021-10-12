@@ -8,8 +8,9 @@ from matplotlib import pyplot as plt
 from plotting.animate import animate_one
 from plotting.common import completed_sims
 from plotting.plotformat import PlotSetup
+from plotting.spatial_metrics import plot_sync_time
 from plotting.fourier_space import fourier_1d, fourier_2d, plot_psd_width, plot_sweep_spread, plot_end_xy_vars, \
-    plot_sweep_end_means
+    plot_sweep_end_means, collapsed_spread, plot_means_2d
 
 
 # Collection of all the functions to plot on each individual directory
@@ -17,7 +18,10 @@ from plotting.fourier_space import fourier_1d, fourier_2d, plot_psd_width, plot_
 PLOT_FUNCTIONS = {
     'animation': animate_one,
     'fourier 1d': fourier_1d,
-    'fourier 2d': fourier_2d
+    'fourier 2d': fourier_2d,
+    'collapsed_spread': collapsed_spread,
+    'SynchronizationEvolution': plot_sync_time,
+    'FourierMeanEvolution': plot_means_2d
 }
 SWEEP_PLOTS = {
     'psd widths': plot_psd_width,
@@ -30,8 +34,10 @@ SWEEP_PLOTS = {
 def plot_individual(source_dir):
     """Run all the single-run plotting functions currently listed"""
     for sim_folder in completed_sims(source_dir):
+        print(f'Processing {sim_folder}..')
         for plot_name, plot_func in PLOT_FUNCTIONS.items():
             if not sim_folder.has_file(plot_name):
+                print(f'    Running {plot_name}...')
                 plot_func(sim_folder)
                 plt.close()
 

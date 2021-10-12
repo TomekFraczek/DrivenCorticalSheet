@@ -25,7 +25,7 @@ def fourier_data_1d(data_src):
         avg_psd = np.mean(row_psds, axis=0)  # TODO: Check this is the right axis
         avg_psds.append(avg_psd)
 
-    avg_psds = np.array(avg_psds)
+    avg_psds = np.array(avg_psds).T
 
     saveable = np.array([avg_psds, *np.meshgrid(time, freqs)])
     np.save(data_src.file_name('1d_fourier_data', 'npy'), saveable, allow_pickle=False)
@@ -141,12 +141,10 @@ def source_spread(data_src, load=True):
 
 
 def fourier_1d(data_src):
-    avg_psds, time, freqs = source_fourier_1d(data_src)
-
-    X, Y = np.meshgrid(time, freqs)
+    avg_psds, freqs, time = source_fourier_1d(data_src)
 
     fig = plt.figure()
-    plt.pcolormesh(X, Y, avg_psds.T, shading='nearest')
+    plt.pcolormesh(freqs, time, avg_psds[0], shading='nearest')
     plt.colorbar()
     plt.ylabel('Frequency')
     plt.xlabel('Time (s)')

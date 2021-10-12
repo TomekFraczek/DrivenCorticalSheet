@@ -77,7 +77,7 @@ def main():
     parser.add_argument('--failed', action='store_true',
                         help='Count the number of simulations that failed to complete well')
     parser.add_argument('--unfail', action='store_true',
-                        help='Count the number of simulations that failed to complete well')
+                        help='Remove the results of any simulations that failed to complete cleanly')
 
     args = parser.parse_args()
 
