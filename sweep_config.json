@@ -61,10 +61,7 @@
         "freq": 0.25
       }
     },
-    "gain_ratio": "<x-var>",
-
-    "external_input":false,
-    "external_input_weight":0
+    "gain_ratio": "<x-var>"
   },
   "test_sweep": {
     "point_config": {
@@ -128,10 +125,7 @@
         "freq": 0.25
       }
     },
-    "gain_ratio": "<x-var>",
-
-    "external_input":false,
-    "external_input_weight":0
+    "gain_ratio": "<x-var>"
   },
   "undriven_sweep": {
     "point_config": {
@@ -195,9 +189,70 @@
         "freq": 0.25
       }
     },
-    "gain_ratio": "<x-var>",
+    "gain_ratio": "<x-var>"
+  },
+  "drive_sweep": {
+    "point_config": {
+      "repetitions": 5,
+      "x-var": {
+        "start": 0,
+        "stop": 10,
+        "num": 10,
+        "endpoint": true
+      },
+      "y-var": {
+        "start": 0.1,
+        "stop": 2,
+        "num": 10,
+        "endpoint": true
+      }
+    },
 
-    "external_input":false,
-    "external_input_weight":0
+    "output_dir_name": "placeholder",
+    "save_numpy": true,
+
+    "solution": {
+      "ode_method": "LSODA",
+      "continuous_soln": false,
+      "max_delta_t":0.1,
+      "min_delta_t": 0.0005,
+      "zero_ics": false
+    },
+    "frames": 100,
+    "frame_rate": 0.10,
+    "interpolate_plot": false,
+    "inspect_t_seconds": 0.35,
+    "inspect_t_samples": 3,
+
+    "sqrt_nodes": 90,
+    "time": 5,
+
+    "system": {
+      "initial": {
+        "type": "uniform",
+        "low": 0,
+        "high": 6.28318
+      },
+      "interaction" : {
+        "beta": 0.6,
+        "r": 0.25
+      },
+      "kernel" : {
+        "s":3,
+        "width": 8
+      },
+      "normalize_kernel": false,
+      "natural_freq": {
+        "a": 1,
+        "b": 0,
+        "c": 0.4
+      },
+      "driver": {
+        "use_driver": true,
+        "strength": "<x-var>",
+        "freq": "<y-var>"
+      }
+    },
+    "gain_ratio": 2.0
   }
 }
