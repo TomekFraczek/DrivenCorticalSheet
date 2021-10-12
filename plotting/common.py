@@ -32,6 +32,12 @@ def load_sim_time(data_src):
     return np.load(data_src.file_name(*TIME_NAME))
 
 
+def load_config(data_src):
+    with open(data_src.file_name('config', 'json')) as f:
+        conf = json.load(f)
+    return conf
+
+
 def load_sim_results(data_folder):
     """Load the data (result of a simulation run) from the target directory"""
     if hasattr(data_folder, 'make_file_path'):
