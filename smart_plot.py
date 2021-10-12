@@ -8,9 +8,10 @@ from matplotlib import pyplot as plt
 from plotting.animate import animate_one
 from plotting.common import completed_sims
 from plotting.plotformat import PlotSetup
+from plotting.meta_plottin import plot_failure_rates
 from plotting.spatial_metrics import plot_sync_time
 from plotting.fourier_space import fourier_1d, fourier_2d, plot_psd_width, plot_sweep_spread, plot_end_xy_vars, \
-    plot_sweep_end_means, collapsed_spread, plot_means_2d
+    plot_sweep_end_means, collapsed_spread, plot_means_2d, plot_vars_2d
 
 
 # Collection of all the functions to plot on each individual directory
@@ -21,7 +22,8 @@ PLOT_FUNCTIONS = {
     'fourier 2d': fourier_2d,
     'collapsed_spread': collapsed_spread,
     'SynchronizationEvolution': plot_sync_time,
-    'FourierMeanEvolution': plot_means_2d
+    'FourierMeanEvolution': plot_means_2d,
+    'FourierVarianceEvolution': plot_vars_2d
 }
 SWEEP_PLOTS = {
     'psd widths': plot_psd_width,
@@ -57,6 +59,7 @@ if __name__ == '__main__':
                         default='plots')
 
     args = parser.parse_args()
+    plot_failure_rates(PlotSetup(args.source, build_new=False))
     plot_individual(args.source)
     plot_sweeps(args.source)
 
