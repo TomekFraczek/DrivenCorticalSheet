@@ -1,7 +1,9 @@
+import numpy as np
 from matplotlib import pyplot as plt
 
 from plotting.common import calc_sweep_wrapper, source_data
-from plotting.common import load_sim_results, load_sim_time, var_names
+from plotting.common import load_sim_results, load_sim_time, var_names, load_config
+from modeling.model import plot_interaction
 
 
 def is_failed(data_source):
@@ -11,6 +13,12 @@ def is_failed(data_source):
 
     time = load_sim_time(data_source)
     return failure, time[-1]
+
+
+def plot_interaction_wrapped(data_src):
+    """Wrapper around the model-side plot interaction function to work with loaded data"""
+    config = load_config(data_src)
+    plot_interaction(config['sqrt_nodes'], config['system'], gain_ratio=1, out_fmt=data_src)
 
 
 def plot_failure_rates(data_source):

@@ -3,6 +3,7 @@ import json
 import numpy as np
 from scipy.integrate import solve_ivp
 from matplotlib import pyplot as plt
+from matplotlib import colors
 from math import cos
 
 from modeling.cortical_sheet import OscillatorArray
@@ -137,7 +138,8 @@ def plot_existing_interaction(deltas, dists, system, out_fmt=None):
     deltas, dists = np.meshgrid(deltas, dists)
 
     plt.figure(figsize=(15, 12))
-    plt.pcolormesh(deltas.T, dists.T, interaction, cmap='coolwarm', shading='gouraud')
+    divnorm = colors.TwoSlopeNorm(vmin=np.min(interaction), vmax=np.max(interaction), vcenter=0.0)
+    plt.pcolormesh(deltas.T, dists.T, interaction, cmap='coolwarm', shading='gouraud', norm=divnorm)
     plt.colorbar()
     plt.title(f'Interaction term -- '
               f'  Gamma: {json.dumps(system.interaction_params)}'
