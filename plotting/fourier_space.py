@@ -231,7 +231,7 @@ def psd_width(data_src):
 
 
 def plot_means_2d(data_src):
-    """Plot the evolution of 2d means over time for a single run"""
+    """Plot the evolution of 2d fourier space means over time for a single run"""
     raw_means = source_fourier_means(data_src)
     time = load_sim_time(data_src)
     x_means, y_means = raw_means[:, 0], raw_means[:, 1]
@@ -250,6 +250,32 @@ def plot_means_2d(data_src):
 
     plt.tight_layout()
     plt.savefig(data_src.file_name('FourierMeanEvolution'))
+    plt.close()
+
+
+def plot_vars_2d(data_src):
+    """Plot the evolution of 2d fourier-space variances over time for a single run"""
+    raw_covs = source_fourier_cov(data_src)
+    time = load_sim_time(data_src)
+    x_vars, y_vars = [], []
+    for c in raw_covs:
+        x_vars.append(c[0][0])
+        y_vars.append(c[1][1])
+
+    plt.figure(figsize=(10, 7))
+
+    plt.subplot(2, 1, 1)
+    plt.plot(time, x_vars)
+    plt.xlabel('Time (s)')
+    plt.ylabel('X Freq Variance')
+
+    plt.subplot(2, 1, 2)
+    plt.plot(time, y_vars)
+    plt.xlabel('Time (s)')
+    plt.ylabel('Y Freq Variance')
+
+    plt.tight_layout()
+    plt.savefig(data_src.file_name('FourierVarianceEvolution'))
     plt.close()
 
 
