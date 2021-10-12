@@ -158,14 +158,16 @@ def fourier_2d(data_src):
     time = load_sim_time(data_src)
 
     fig = plt.figure(figsize=(20, 13))
-    n_states = 7
-    for i in range(n_states-1):
+    n_states = 6
+    for i in range(n_states):
         plt.subplot(2, 3, i+1, aspect=1.0)
-        state_id = round((i / n_states) * len(time))
-        next_state = round((i+1 / n_states) * len(time))
-        these_states = state_ffts[state_id:next_state, :, :]
-        avg_state = np.mean(these_states, axis=0)
-        plt.pcolormesh(fx, fy, avg_state, shading='nearest')
+        state_id = round((i / (n_states-1)) * len(time))
+        try:
+            this_state = state_ffts[state_id, :, :]
+        except IndexError:
+            state_id = -1
+            this_state = state_ffts[-1, :, :]
+        plt.pcolormesh(fx, fy, this_state, shading='nearest')
         plt.xlabel('X Frequencies')
         plt.ylabel('Y Frequencies')
         plt.colorbar()
@@ -219,9 +221,9 @@ def psd_width(data_src):
         fourier_1d(data_src)
 
     psd_data = np.load(data_src.file_name('1d_fourier_data', 'npy'), allow_pickle=True)
-    times, freqs, psds = psd_data[0], psd_data[1], psd_data[2]
+    psds, times, freqs = psd_data[0], psd_data[1], psd_data[2]
 
-    end_psd = psds[-1, :]
+    end_psd = psds[:, -1]
     end_freqs = freqs[:, -1]
 
     average = np.average(end_freqs, weights=end_psd)
