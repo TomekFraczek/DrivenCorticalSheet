@@ -49,7 +49,7 @@ class KuramotoSystem(object):
 
             else:
                 raise KeyError('Unknown stimulator location!')
-
+            y_dist[y_dist < 1] = 1
             self.input_weight = self.input_params['strength'] / y_dist ** 2
             self.input_freq = self.input_params['freq']
             self.input_effect = np.zeros((np.prod(array_size),))
