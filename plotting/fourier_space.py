@@ -323,8 +323,8 @@ def plot_psd_width(data_src):
 
 def plot_end_xy_vars(data_src):
 
-    calc = calc_sweep_wrapper(end_xy_vars, 'end_xy_vars')
-    x_vars, y_vars, xs, ys = source_data(data_src, 'end_xy_vars', calc)
+    calc = calc_sweep_wrapper(end_xy_vars, 'endxy vars')
+    x_vars, y_vars, xs, ys = source_data(data_src, 'end xy vars', calc)
     x_name, y_name = var_names(data_src)
 
     fig = plt.figure(figsize=(11, 6))
