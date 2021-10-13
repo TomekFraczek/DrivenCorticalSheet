@@ -40,7 +40,7 @@ class KuramotoSystem(object):
             if stim_loc == 'center':
                 u, v = np.meshgrid(np.arange(self.dims[0]), np.arange(self.dims[1]), sparse=False, indexing='xy')
                 u, v = u.ravel(), v.ravel()
-                x = [round(self.dims[0]/1), round(self.dims[1]/2)]
+                x = [round(self.dims[0]/2), round(self.dims[1]/2)]
                 y_dist = np.array(np.sqrt((u - x[0])**2 + (v - x[1])**2))
 
             # Distance from the top row
