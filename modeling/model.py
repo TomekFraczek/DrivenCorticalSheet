@@ -34,7 +34,21 @@ class KuramotoSystem(object):
         self.external_input = self.input_params['use_driver']
         if self.external_input:
             self.n_inputs = np.prod(self.dims)
-            y_dist = (np.array(range(self.n_inputs)) + self.dims[1]) // (self.dims[1])
+            stim_loc = self.input_params['location']
+
+            # Distance from the center of the sheet
+            if stim_loc == 'center':
+                u, v = np.meshgrid(np.arange(self.dims[0]), np.arange(self.dims[1]), sparse=False, indexing='xy')
+                u, v = u.ravel(), v.ravel()
+                x = [round(self.dims[0]/1), round(self.dims[1]/2)]
+                y_dist = np.array(np.sqrt((u - x[0])**2 + (v - x[1])**2))
+
+            # Distance from the top row
+            elif stim_loc == 'top':
+                y_dist = (np.array(range(self.n_inputs)) + self.dims[1]) // (self.dims[1])
+
+            else:
+                raise KeyError('Unknown stimulator location!')
 
             self.input_weight = self.input_params['strength'] / y_dist ** 2
             self.input_freq = self.input_params['freq']

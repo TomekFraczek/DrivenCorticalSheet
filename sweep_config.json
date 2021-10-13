@@ -58,7 +58,8 @@
       "driver": {
         "use_driver": true,
         "strength": "<y-var>",
-        "freq": 0.25
+        "freq": 0.25,
+        "location": "top"
       }
     },
     "gain_ratio": "<x-var>"
@@ -122,7 +123,8 @@
       "driver": {
         "use_driver": false,
         "strength": 0,
-        "freq": 0.25
+        "freq": 0.25,
+        "location": "top"
       }
     },
     "gain_ratio": "<x-var>"
@@ -186,7 +188,8 @@
       "driver": {
         "use_driver": false,
         "strength": 0,
-        "freq": 0.25
+        "freq": 0.25,
+        "location": "top"
       }
     },
     "gain_ratio": "<x-var>"
@@ -250,9 +253,10 @@
       "driver": {
         "use_driver": true,
         "strength": "<x-var>",
-        "freq": "<y-var>"
+        "freq": "<y-var>",
+        "location": "center"
       }
     },
-    "gain_ratio": 2.0
+    "gain_ratio": 1.0
   }
 }
