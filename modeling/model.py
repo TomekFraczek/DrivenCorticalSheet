@@ -14,7 +14,7 @@ np.set_printoptions(precision=3, suppress=True)
 
 
 class KuramotoSystem(object):
-    def __init__(self, array_size, system_params, gain, initialize=True, boundary=False):
+    def __init__(self, array_size, system_params, gain, initialize=True, boundary=False, location=None):
 
         print('Initializing model...')
         self.gain = gain
@@ -34,11 +34,14 @@ class KuramotoSystem(object):
         self.external_input = self.input_params['use_driver']
         if self.external_input:
             self.n_inputs = np.prod(self.dims)
+
             y_dist = (np.array(range(self.n_inputs)) + self.dims[1]) // (self.dims[1])
 
             self.input_weight = self.input_params['strength'] / y_dist ** 2
             self.input_freq = self.input_params['freq']
             self.input_effect = np.zeros((np.prod(array_size),))
+
+        self.run_loc = location
 
         print('System ready!')
 
@@ -61,9 +64,7 @@ class KuramotoSystem(object):
 
         # dx = np.mod(dx,2*np.pi)*np.sign(dx)
 
-        print('t_step:', np.round(t, 4))
-
-        # inspect = True
+        # print('t_step:', np.round(t, 4))
 
         if not inspect:
             return dx
@@ -88,6 +89,21 @@ class KuramotoSystem(object):
             # input('\n...')
             return dx
 
+    def make_time_event(self, save_freq):
+        output = self.run_loc.file_name('saved_state', 'npy')
+        end_time = self.run_loc.file_name('save_time', 'npy')
+
+        def time_event(t, y):
+            dist = t - round(t, save_freq - 1)
+            # print(f'  Nearest save is {round(dist, 8)}s away (t={round(t,8)})')
+            if abs(dist) < 10**(-6):
+                print(f'Saving state at t={t}')
+                np.save(output, y, allow_pickle=False)
+                np.save(end_time, t, allow_pickle=False)
+            return dist
+
+        return time_event
+
     def solve(self,
               time_scale: tuple = (0, 10),
               ode_method: str = 'LSODA',  # 'Radau' works too, RK45 not so much
@@ -96,6 +112,7 @@ class KuramotoSystem(object):
               max_delta_t: float = 0.1,
               min_delta_t: float = 0,
               zero_ics: bool = False,
+              save_freq: int = 0
               ):
         """Solve ODE using methods, problem may be stiff so go with inaccurate to hit convergence
         """
@@ -106,6 +123,11 @@ class KuramotoSystem(object):
         else:
             x0 = np.zeros(np.prod(self.osc.ic.shape))
 
+        if save_freq and self.run_loc is not None:
+            events = [self.make_time_event(save_freq)]
+        else:
+            events = None
+
         return solve_ivp(fn,
                          time_scale,
                          x0,
@@ -114,7 +136,8 @@ class KuramotoSystem(object):
                          min_step=min_delta_t,
                          method=ode_method,
                          dense_output=continuous_soln,
-                         vectorized=False
+                         vectorized=False,
+                         events=events
                          )
 
     def calc_input(self, t: float, all_phases: np.ndarray):
@@ -167,12 +190,12 @@ if __name__ == "__main__":
         100,
         {
             "interaction": {
-                "beta": 0,
-                "r": 0
+                "beta": 0.6,
+                "r": 0.25
             },
             "kernel": {
                 "s": 2,
-                "width": 40
+                "width": 8
             },
             "initial": {
                 "type": "uniform",
@@ -184,5 +207,10 @@ if __name__ == "__main__":
                 "b": 0,
                 "c": 0.4
             },
+            "driver": {
+                "use_driver": True,
+                "strength": 2.0,
+                "freq": 0.25
+              }
         }
     )

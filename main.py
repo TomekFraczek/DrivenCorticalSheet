@@ -30,7 +30,8 @@ def model(config, fmt: (str, PlotSetup) = 'simulation'):
         (nodes_side, nodes_side),
         config['system'],
         gain,
-        boundary=torus
+        boundary=torus,
+        location=fmt
     )
 
     # Run Model

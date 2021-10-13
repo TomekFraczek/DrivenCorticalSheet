@@ -216,7 +216,8 @@
       "continuous_soln": false,
       "max_delta_t":0.1,
       "min_delta_t": 0.0005,
-      "zero_ics": false
+      "zero_ics": false,
+      "save_freq": 1
     },
     "frames": 100,
     "frame_rate": 0.10,
