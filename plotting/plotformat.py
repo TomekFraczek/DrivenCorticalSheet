@@ -21,7 +21,7 @@ def from_existing(source_dir):
 
 
 class PlotSetup(object):
-    def __init__(self, base_folder='plots', label='', readonly=False, build_new=True):
+    def __init__(self, base_folder='plots', label='', readonly=False, build_new=True, silent=True):
         self.base = base_folder
         self.label = label
         self.directory = None
@@ -32,10 +32,11 @@ class PlotSetup(object):
         self.make_file_path()  # creates self.directory
         self.set_mpl_params()  # modify specific mpl.rcParams
 
-        if readonly:
-            print(f'Ready to LOAD from: {self.directory}')
-        else:
-            print(f'Ready to SAVE OUT to: {self.directory}')
+        if not silent:
+            if readonly:
+                print(f'Ready to LOAD from: {self.directory}')
+            else:
+                print(f'Ready to SAVE OUT to: {self.directory}')
 
     def __repr__(self):
         return self.directory
