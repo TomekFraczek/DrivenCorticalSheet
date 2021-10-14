@@ -76,6 +76,20 @@ class Animator(object):
         )
         self.format_frame(ax)
 
+        if self.config['system']['driver']['use_driver']:
+            try:
+                loc = self.config['system']['driver']['location']
+            except KeyError:
+                print('No stimulator location information available')
+            else:
+                if loc == 'center':
+                    plt.plot([self.shape[0]/2], [self.shape[1]/2], 'ko', markersize=5)
+                if loc == 'top':
+                    plt.plot(
+                        [self.shape[1]+0.5, self.shape[1]-0.5],
+                        [self.shape[0]-0.5, self.shape[0]-0.5],
+                        'ko', markersize=2)
+
         title = self.this_title(t)
         plt.title(title)
         plt.xlabel(self.x_axis)
