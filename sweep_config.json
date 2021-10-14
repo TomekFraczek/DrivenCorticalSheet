@@ -199,7 +199,7 @@
       "repetitions": 5,
       "x-var": {
         "start": 0,
-        "stop": 100,
+        "stop": 50,
         "num": 10,
         "endpoint": true
       },
@@ -227,7 +227,7 @@
     "inspect_t_seconds": 0.35,
     "inspect_t_samples": 3,
 
-    "sqrt_nodes": 70,
+    "sqrt_nodes": 64,
     "time": 5,
 
     "system": {
@@ -242,7 +242,7 @@
       },
       "kernel" : {
         "s":3,
-        "width": 16
+        "width": 12
       },
       "normalize_kernel": false,
       "natural_freq": {
