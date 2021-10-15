@@ -110,6 +110,8 @@ class KuramotoSystem(object):
               max_delta_t: float = 0.1,
               min_delta_t: float = 0,
               zero_ics: bool = False,
+              rtol: float = 1e-3,
+              atol: float = 1e-5
               ):
         """Solve ODE using methods, problem may be stiff so go with inaccurate to hit convergence
         """
@@ -128,7 +130,9 @@ class KuramotoSystem(object):
                          min_step=min_delta_t,
                          method=ode_method,
                          dense_output=continuous_soln,
-                         vectorized=False
+                         vectorized=False,
+                         rtol=rtol,
+                         atol=atol
                          )
 
     def calc_input(self, t: float, all_phases: np.ndarray):
