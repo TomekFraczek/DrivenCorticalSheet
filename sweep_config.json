@@ -196,17 +196,17 @@
   },
   "drive_sweep": {
     "point_config": {
-      "repetitions": 5,
+      "repetitions": 1,
       "x-var": {
         "start": 0,
         "stop": 50,
-        "num": 10,
+        "num": 6,
         "endpoint": true
       },
       "y-var": {
         "start": 0.1,
         "stop": 2,
-        "num": 10,
+        "num": 6,
         "endpoint": true
       }
     },
@@ -219,7 +219,9 @@
       "continuous_soln": false,
       "max_delta_t":0.1,
       "min_delta_t": 0.0005,
-      "zero_ics": false
+      "zero_ics": false,
+      "rtol": 1e-2,
+      "atol": 1e-4
     },
     "frames": 100,
     "frame_rate": 0.10,
