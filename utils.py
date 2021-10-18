@@ -33,9 +33,9 @@ def cut_failures(start_dir):
             if os.path.exists(completion):
                 with open(completion) as f:
                     failure = 'failed' in f.read().lower()
-            if failure:
-                os.remove(completion)
-                n_removed += 1
+                if failure:
+                    os.remove(completion)
+                    n_removed += 1
 
     print(f"{n_removed} completion files removed!")
 
