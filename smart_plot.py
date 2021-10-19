@@ -9,7 +9,7 @@ from plotting.animate import animate_one
 from plotting.common import completed_sims
 from plotting.plotformat import PlotSetup
 from plotting.meta_plottin import plot_failure_rates, plot_interaction_wrapped
-from plotting.spatial_metrics import plot_sync_time
+from plotting.spatial_metrics import plot_sync_time, mega_gif
 from plotting.fourier_space import fourier_1d, fourier_2d, plot_psd_width, plot_sweep_spread, plot_end_xy_vars, \
     plot_sweep_end_means, collapsed_spread, plot_means_2d, plot_vars_2d
 
@@ -17,20 +17,21 @@ from plotting.fourier_space import fourier_1d, fourier_2d, plot_psd_width, plot_
 # Collection of all the functions to plot on each individual directory
 # Each entry should be the name of the primary output file as a key, with the function as the value
 PLOT_FUNCTIONS = {
-    # 'animation': animate_one,
+    'animation': animate_one,
     'interaction': plot_interaction_wrapped,
-    # 'fourier 1d': fourier_1d,
-    # 'fourier 2d': fourier_2d,
-    # 'collapsed_spread': collapsed_spread,
-    # 'SynchronizationEvolution': plot_sync_time,
-    # 'FourierMeanEvolution': plot_means_2d,
-    # 'FourierVarianceEvolution': plot_vars_2d
+    'fourier 1d': fourier_1d,
+    'fourier 2d': fourier_2d,
+    'collapsed_spread': collapsed_spread,
+    'SynchronizationEvolution': plot_sync_time,
+    'FourierMeanEvolution': plot_means_2d,
+    'FourierVarianceEvolution': plot_vars_2d
 }
 SWEEP_PLOTS = {
     'psd widths': plot_psd_width,
     'freq spreads': plot_sweep_spread,
     'end xy vars': plot_end_xy_vars,
-    'end xy means': plot_sweep_end_means
+    'end xy means': plot_sweep_end_means,
+    'mega gif': mega_gif
 }
 
 

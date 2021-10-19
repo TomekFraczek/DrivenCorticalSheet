@@ -12,6 +12,14 @@ TIME_NAME = 'time', 'npy'
 LOG_NAME = 'log', 'txt'
 
 
+def get_point_id(sim_folder):
+    return re.search('Point([0-9]*)', sim_folder.directory).group(1)
+
+
+def get_rep_id(sim_folder):
+    return re.search('Rep([0-9]*)', sim_folder.directory).group(1)
+
+
 def completed_sims(source_dir):
     return [d for d in from_existing(source_dir) if d.has_file('completion', 'txt')]
 
@@ -71,8 +79,8 @@ def calc_sweep(source_dir, function, save_name):
         values = function(sim_folder)
 
         # Identify where in the sweep we are, and save each of the calculated values
-        point_id = re.search('Point([0-9]*)', sim_folder.directory).group(1)
-        rep_id = re.search('Rep([0-9]*)', sim_folder.directory).group(1)
+        point_id = get_point_id(sim_folder)
+        rep_id = get_rep_id(sim_folder)
         if not all_values:
             n_vals = len(values) if hasattr(values, '__len__') else 1
             all_values = [np.zeros(shape=(n_xs * n_ys, n_reps)) for k in range(n_vals)]

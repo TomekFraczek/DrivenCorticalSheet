@@ -82,6 +82,14 @@ class PlotSetup(object):
                 self.label = f'{self.label}_{self.timestamp}'
                 self.make_file_path()
 
+    def sub_folders(self):
+        folders = []
+        for f in os.listdir(self.directory):
+            fmt = PlotSetup(self.directory, f, build_new=False)
+            if os.path.isdir(fmt.directory):
+                folders.append(fmt)
+        return folders
+
     @staticmethod
     def set_mpl_params():
         """matplotlib parameters plot formatting"""
