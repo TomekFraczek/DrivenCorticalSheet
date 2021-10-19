@@ -47,6 +47,9 @@ class KuramotoSystem(object):
             elif stim_loc == 'top':
                 y_dist = (np.array(range(self.n_inputs)) + self.dims[1]) // (self.dims[1])
 
+            elif stim_loc == 'uniform':
+                y_dist = np.ones((np.prod(array_size),))
+
             else:
                 raise KeyError('Unknown stimulator location!')
             y_dist[y_dist < 1] = 1

@@ -13,7 +13,7 @@ from math import exp
 
 def make_kernel(**params):
     try:
-        kernel_type = params['type']
+        kernel_type = params.pop('type')
     except KeyError:
         kernel_type = 'wavelet'
 
