@@ -76,18 +76,41 @@ def dist_cov(x_vals, y_vals, freq_array):
     ])
 
 
+def dist_cov_brutish(x_vals, y_vals, weights):
+
+    total_samples = 10**6
+    total_weight = np.sum(weights)
+    flat_weights = weights.ravel()
+    all_coords = zip(x_vals.ravel(), y_vals.ravel())
+
+    samples = []
+    for i, coords in enumerate(all_coords):
+        n_such = round(flat_weights[i] * total_samples / total_weight)
+        samples.extend(n_such * [coords])
+
+    covariance = np.cov(samples, rowvar=False)
+    return covariance
+
+
 def fourier_cov(data_src):
 
-    state_ffts, x_freqs, _ = source_fourier_2d(data_src)
+    state_ffts, x_freqs, y_freqs = source_fourier_2d(data_src)
     freqs = np.unique(x_freqs)
     covariances = []
+    brute_covs = []
     for i in range(state_ffts.shape[0]):
         fft = state_ffts[i, :, :]
+        brute_cov_here = dist_cov_brutish(x_freqs, y_freqs, fft)
         cov_here = dist_cov(freqs, freqs, fft)
         covariances.append(cov_here)
+        brute_covs.append(brute_cov_here)
 
     covariances = np.array(covariances)
     np.save(data_src.file_name('fourier_covariances', 'npy'), covariances, allow_pickle=False)
+
+    brute_covs = np.array(brute_covs)
+    np.save(data_src.file_name('brute_fourier_covariances', 'npy'), brute_covs, allow_pickle=False)
+
     return covariances
 
 
@@ -323,7 +346,7 @@ def plot_psd_width(data_src):
 
 def plot_end_xy_vars(data_src):
 
-    calc = calc_sweep_wrapper(end_xy_vars, 'endxy vars')
+    calc = calc_sweep_wrapper(end_xy_vars, 'end xy vars')
     x_vars, y_vars, xs, ys = source_data(data_src, 'end xy vars', calc)
     x_name, y_name = var_names(data_src)
 
