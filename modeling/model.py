@@ -24,7 +24,7 @@ class KuramotoSystem(object):
         self.interaction = Interaction(array_size, **self.interaction_params)
 
         self.kernel_params = system_params['kernel']
-        self.wavelet_func = make_kernel('wavelet', **self.kernel_params)
+        self.wavelet_func = make_kernel(**self.kernel_params)
 
         if initialize:  # Option to not initialize for later plotting purposes
             self.osc = OscillatorArray(array_size, system_params, gain, boundary)

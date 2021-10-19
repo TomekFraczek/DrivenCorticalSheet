@@ -46,6 +46,7 @@
         "r": 0.25
       },
       "kernel" : {
+        "type": "wavelet",
         "s":3,
         "width": 8
       },
@@ -111,6 +112,7 @@
         "r": 0.25
       },
       "kernel" : {
+        "type": "wavelet",
         "s":3,
         "width": 8
       },
@@ -176,6 +178,7 @@
         "r": 0.25
       },
       "kernel" : {
+        "type": "wavelet",
         "s":3,
         "width": 8
       },
@@ -243,6 +246,7 @@
         "r": 0.25
       },
       "kernel" : {
+        "type": "wavelet",
         "s":2,
         "width": 16
       },
@@ -310,6 +314,7 @@
         "r": 0.25
       },
       "kernel" : {
+        "type": "wavelet",
         "s":3,
         "width": 16
       },
@@ -377,6 +382,7 @@
         "r": 0.25
       },
       "kernel" : {
+        "type": "wavelet",
         "s":2,
         "width": 16
       },
@@ -440,6 +446,7 @@
         "high": 6.28318
       },
       "interaction" : {
+        "type": "wavelet",
         "beta": 0.8,
         "r": 0.25
       },
@@ -507,6 +514,7 @@
         "high": 6.28318
       },
       "interaction" : {
+        "type": "wavelet",
         "beta": 1.0,
         "r": 0.25
       },
@@ -578,6 +586,7 @@
         "r": 0.25
       },
       "kernel" : {
+        "type": "wavelet",
         "s":2,
         "width": 16
       },

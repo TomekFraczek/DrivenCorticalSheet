@@ -11,7 +11,12 @@ from matplotlib import pyplot as plt
 from math import exp
 
 
-def make_kernel(kernel_type, **params):
+def make_kernel(**params):
+    try:
+        kernel_type = params['type']
+    except KeyError:
+        kernel_type = 'wavelet'
+
     if kernel_type == "constant":
         return constant
     elif kernel_type == "wavelet":
@@ -74,11 +79,12 @@ def plot_wavelet(X: np.ndarray,
 
 
 def main():
+    s = 3
     distance = 40
     resolution = 1000
     x = np.linspace(-distance, distance, resolution)
-    s = 3
-    wave = wavelet(x, s, distance)
+
+    wave = make_kernel('constant', s=s, width=distance)(x)
 
     plot_wavelet(
         np.asarray([x, wave]).T,
