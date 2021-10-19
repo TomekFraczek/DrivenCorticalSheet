@@ -4,6 +4,7 @@ import numpy as np
 from skimage.transform import resize
 from skimage.util import crop
 from progressbar import progressbar
+from modeling.model import KuramotoSystem
 from plotting.animate import animate_one
 from plotting.common import load_sim_results, source_data, load_sim_time, load_config, var_names, \
     get_point_id, get_rep_id
@@ -90,7 +91,8 @@ def source_animation_data(data_src):
 
 
 def mega_gif(data_src):
-
+    """Plot a massive gif that shows randomly sampled reps for each point in a run"""
+    #TODO: currently shown upside down relative to sweep plots, should probably fix this
     gif_readers = source_animation_data(data_src)
 
     sample = gif_readers[0][0]
@@ -121,4 +123,66 @@ def mega_gif(data_src):
     mega_writer.close()
 
 
+def couple_vs_stim(data_src):
 
+    config, osc_state, time, fmt = load_sim_results(data_src)
+
+    n_t_samples = 100
+    t_sample_ids = np.round(np.linspace(0, len(time)-1, num=n_t_samples)).astype(int)
+
+    side = config['sqrt_nodes']
+    if side % 2:
+        center = (side ** 2 - 1) / 2
+        close = (side - 3) / 4
+        far = (side - 1) / 2
+        x_sample_ids = [int(center - far), int(center - close),
+                      int(center),
+                      int(center + close), int(center + far)]
+    else:
+        center = (side ** 2 - side) / 2 - 1
+        close = side / 4 - 1
+        far = side / 2 - 1
+        x_sample_ids = [int(center - far), int(center - close),
+                      int(center),
+                      int(center + close + 2), int(center + far + 1)]
+
+    print(f'Sampling oscillators: {x_sample_ids}')
+
+    model = KuramotoSystem((side, side), config['system'], config['gain_ratio'], initialize=True)
+    all_effects = []
+    for t_id in t_sample_ids:
+        phases = osc_state[:, :, t_id]
+        effect_ratios = model.compare_inputs(time[t_id], phases.ravel())
+        all_effects.append([effect_ratios[x_id] for x_id in x_sample_ids])
+
+    all_effects = list(zip(*all_effects))
+    all_effects.append([time[t_id] for t_id in t_sample_ids])
+
+    np.save(data_src.file_name('stim strength', 'npy'), all_effects, allow_pickle=False)
+    return all_effects
+
+
+def plot_stim_strength(data_src):
+    """
+    Plot the effect of the external input on phases of several oscillators,
+    This is plotted relative to the effect of the entire rest of the sheet, over time
+    """
+    all_effects = source_data(data_src, 'stim strength', couple_vs_stim)
+
+    time = all_effects[-1]
+    n_sample_osc = len(all_effects)-1
+
+    plt.figure(figsize=(8, 12))
+    lim = max(abs(all_effects[2]))
+
+    labels = ['Left Edge', 'Left Middle', 'Center', 'Right Middle', 'Right Edge']
+
+    for i in range(n_sample_osc):
+        plt.subplot(n_sample_osc, 1, i+1)
+        plt.plot(time, all_effects[i], linewidth=0.75, label=labels[i])
+        plt.plot(time, all_effects[i], 'ko', markersize=2.0)
+        plt.yscale('symlog')
+        plt.ylim([-lim, lim])
+        plt.legend()
+    plt.tight_layout()
+    plt.savefig(data_src.file_name('RelativeStimStrength', 'png'))

@@ -59,51 +59,39 @@ class KuramotoSystem(object):
 
         print('System ready!')
 
-    def differential_equation(self, t: float, x: np.ndarray, inspect:bool=False):
-        """ of the form: wi - 'k/n * sum_all(x0:x_N)*fn_of_dist(xi - x_j) * sin(xj - xi))'
-        """
+    def compare_inputs(self, t, phases):
+        """Compare the strength of the external input to the effect of the other oscillators in the sheet"""
+        sheet_effect = self.sheet_effect(phases)
+
+        self.calc_input(t, phases)
+        input_effect = self.input_effect
+
+        return input_effect / sheet_effect
+
+    def sheet_effect(self, x: np.ndarray):
+        """Effect of the oscillators on other oscillators in the cortical sheet"""
         K = self.gain
-        W = self.wavelet # indx where < threshold
+        W = self.wavelet  # index where < threshold
         deltas = self.interaction.delta(x.ravel())
 
         G = self.interaction.gamma(deltas)  # mask
 
         N = np.prod(self.osc.ic.shape)
 
-        dx = K/N*np.sum(W*G, axis=1).ravel() + self.osc.natural_frequency.ravel()
+        return K / N * np.sum(W * G, axis=1).ravel()
+
+    def differential_equation(self, t: float, x: np.ndarray):
+        """ of the form: wi - 'k/n * sum_all(x0:x_N)*fn_of_dist(xi - x_j) * sin(xj - xi))' """
+
+        print('t_step:', np.round(t, 4))
+
+        dx = self.sheet_effect(x) + self.osc.natural_frequency.ravel()
 
         if self.external_input:
             self.calc_input(t, x)
             dx += self.input_effect
 
-        # dx = np.mod(dx,2*np.pi)*np.sign(dx)
-
-        print('t_step:', np.round(t, 4))
-
-        # inspect = True
-
-        if not inspect:
-            return dx
-
-        else:
-            print('\nics\n',self.osc.ic.ravel(),
-                '\nx\n',x,
-                '\ndistance\n', self.osc.distance,
-                '\ndiff\n',deltas,
-                '\nG\n',G,'\nW\n',W,
-                '\nG*W\n',G*W,
-                '\nsum(G*W)\n',np.sum(W*G,axis=1),
-                '\nnatl frequency\n',self.osc.natural_frequency,
-                '\ndx\n',dx,
-                '\nmean+3sigma(dx)',
-                np.round(np.mean(dx)+3*np.std(dx),3),
-                '\nmean(dx)',np.round(np.mean(dx),3),
-                '\nmean-3sigma(dx)',
-                np.round(np.mean(dx)-3*np.std(dx),3),
-                '\nstdev(dx)', np.round(np.std(dx),3),
-                )
-            # input('\n...')
-            return dx
+        return dx
 
     def solve(self,
               time_scale: tuple = (0, 10),
