@@ -116,7 +116,6 @@ def mega_gif(data_src):
         big_frame = np.vstack(all_pts)
         mega_writer.append_data(big_frame)
 
-
     for many in gif_readers:
         for r in many:
             r.close()
@@ -173,7 +172,7 @@ def plot_stim_strength(data_src):
     n_sample_osc = len(all_effects)-1
 
     plt.figure(figsize=(8, 12))
-    lim = max(abs(all_effects[2]))
+    lim = max(np.abs(all_effects[2]))
 
     labels = ['Left Edge', 'Left Middle', 'Center', 'Right Middle', 'Right Edge']
 
