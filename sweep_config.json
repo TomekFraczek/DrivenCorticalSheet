@@ -60,6 +60,7 @@
         "use_driver": true,
         "strength": "<y-var>",
         "freq": 0.25,
+        "scale": 0.25,
         "location": "top"
       }
     },
@@ -126,6 +127,7 @@
         "use_driver": false,
         "strength": 0,
         "freq": 0.25,
+        "scale": 0.25,
         "location": "top"
       }
     },
@@ -192,6 +194,7 @@
         "use_driver": false,
         "strength": 0,
         "freq": 0.25,
+        "scale": 0.25,
         "location": "top"
       }
     },
@@ -202,14 +205,14 @@
       "repetitions": 1,
       "x-var": {
         "start": 0,
-        "stop": 50,
-        "num": 7,
+        "stop": 1,
+        "num": 10,
         "endpoint": true
       },
       "y-var": {
         "start": 0.1,
         "stop": 2,
-        "num": 7,
+        "num": 10,
         "endpoint": true
       }
     },
@@ -218,7 +221,7 @@
     "save_numpy": true,
 
     "solution": {
-      "ode_method": "LSODA",
+      "ode_method": "RK45",
       "continuous_soln": false,
       "max_delta_t": 0.1,
       "min_delta_t": 0.0005,
@@ -232,7 +235,7 @@
     "inspect_t_seconds": 0.35,
     "inspect_t_samples": 3,
 
-    "sqrt_nodes": 64,
+    "sqrt_nodes": 56,
     "time": 5,
 
     "system": {
@@ -254,30 +257,31 @@
       "natural_freq": {
         "a": 1,
         "b": 0,
-        "c": 0.4
+        "c": 0.3
       },
       "driver": {
         "use_driver": true,
         "strength": "<x-var>",
         "freq": "<y-var>",
+        "scale": 0.25,
         "location": "center"
       }
     },
-    "gain_ratio": 1.0
+    "gain_ratio": 0.5
   },
-    "drive_sweep_s3_b06": {
+  "drive_sweep_s3_b06": {
     "point_config": {
       "repetitions": 1,
       "x-var": {
         "start": 0,
-        "stop": 50,
-        "num": 7,
+        "stop": 1,
+        "num": 10,
         "endpoint": true
       },
       "y-var": {
         "start": 0.1,
         "stop": 2,
-        "num": 7,
+        "num": 10,
         "endpoint": true
       }
     },
@@ -286,7 +290,7 @@
     "save_numpy": true,
 
     "solution": {
-      "ode_method": "LSODA",
+      "ode_method": "RK45",
       "continuous_soln": false,
       "max_delta_t": 0.1,
       "min_delta_t": 0.0005,
@@ -300,7 +304,7 @@
     "inspect_t_seconds": 0.35,
     "inspect_t_samples": 3,
 
-    "sqrt_nodes": 64,
+    "sqrt_nodes": 56,
     "time": 5,
 
     "system": {
@@ -322,30 +326,31 @@
       "natural_freq": {
         "a": 1,
         "b": 0,
-        "c": 0.4
+        "c": 0.3
       },
       "driver": {
         "use_driver": true,
         "strength": "<x-var>",
         "freq": "<y-var>",
+        "scale": 0.25,
         "location": "center"
       }
     },
-    "gain_ratio": 1.0
+    "gain_ratio": 0.5
   },
   "drive_sweep_s2_b08": {
     "point_config": {
       "repetitions": 1,
       "x-var": {
         "start": 0,
-        "stop": 50,
-        "num": 7,
+        "stop": 1,
+        "num": 10,
         "endpoint": true
       },
       "y-var": {
         "start": 0.1,
         "stop": 2,
-        "num": 7,
+        "num": 10,
         "endpoint": true
       }
     },
@@ -354,7 +359,7 @@
     "save_numpy": true,
 
     "solution": {
-      "ode_method": "LSODA",
+      "ode_method": "RK45",
       "continuous_soln": false,
       "max_delta_t": 0.1,
       "min_delta_t": 0.0005,
@@ -368,7 +373,7 @@
     "inspect_t_seconds": 0.35,
     "inspect_t_samples": 3,
 
-    "sqrt_nodes": 64,
+    "sqrt_nodes": 56,
     "time": 5,
 
     "system": {
@@ -390,30 +395,31 @@
       "natural_freq": {
         "a": 1,
         "b": 0,
-        "c": 0.4
+        "c": 0.3
       },
       "driver": {
         "use_driver": true,
         "strength": "<x-var>",
         "freq": "<y-var>",
+        "scale": 0.25,
         "location": "center"
       }
     },
-    "gain_ratio": 1.5
+    "gain_ratio": 0.75
   },
   "drive_sweep_s3_b08": {
     "point_config": {
       "repetitions": 1,
       "x-var": {
         "start": 0,
-        "stop": 50,
-        "num": 7,
+        "stop": 1,
+        "num": 10,
         "endpoint": true
       },
       "y-var": {
         "start": 0.1,
         "stop": 2,
-        "num": 7,
+        "num": 10,
         "endpoint": true
       }
     },
@@ -422,7 +428,7 @@
     "save_numpy": true,
 
     "solution": {
-      "ode_method": "LSODA",
+      "ode_method": "RK45",
       "continuous_soln": false,
       "max_delta_t": 0.1,
       "min_delta_t": 0.0005,
@@ -436,7 +442,7 @@
     "inspect_t_seconds": 0.35,
     "inspect_t_samples": 3,
 
-    "sqrt_nodes": 64,
+    "sqrt_nodes": 56,
     "time": 5,
 
     "system": {
@@ -458,30 +464,31 @@
       "natural_freq": {
         "a": 1,
         "b": 0,
-        "c": 0.4
+        "c": 0.3
       },
       "driver": {
         "use_driver": true,
         "strength": "<x-var>",
         "freq": "<y-var>",
+        "scale": 0.25,
         "location": "center"
       }
     },
-    "gain_ratio": 1.5
+    "gain_ratio": 0.75
   },
   "drive_sweep_s3_b10": {
     "point_config": {
       "repetitions": 1,
       "x-var": {
         "start": 0,
-        "stop": 50,
-        "num": 7,
+        "stop": 1,
+        "num": 10,
         "endpoint": true
       },
       "y-var": {
         "start": 0.1,
         "stop": 2,
-        "num": 7,
+        "num": 10,
         "endpoint": true
       }
     },
@@ -490,7 +497,7 @@
     "save_numpy": true,
 
     "solution": {
-      "ode_method": "LSODA",
+      "ode_method": "RK45",
       "continuous_soln": false,
       "max_delta_t": 0.1,
       "min_delta_t": 0.0005,
@@ -504,7 +511,7 @@
     "inspect_t_seconds": 0.35,
     "inspect_t_samples": 3,
 
-    "sqrt_nodes": 64,
+    "sqrt_nodes": 56,
     "time": 5,
 
     "system": {
@@ -526,30 +533,31 @@
       "natural_freq": {
         "a": 1,
         "b": 0,
-        "c": 0.4
+        "c": 0.3
       },
       "driver": {
         "use_driver": true,
         "strength": "<x-var>",
         "freq": "<y-var>",
+        "scale": 0.25,
         "location": "center"
       }
     },
-    "gain_ratio": 2.0
+    "gain_ratio": 1.0
   },
   "drive_sweep_s2_b10": {
     "point_config": {
       "repetitions": 1,
       "x-var": {
         "start": 0,
-        "stop": 50,
-        "num": 7,
+        "stop": 1,
+        "num": 10,
         "endpoint": true
       },
       "y-var": {
         "start": 0.1,
         "stop": 2,
-        "num": 7,
+        "num": 10,
         "endpoint": true
       }
     },
@@ -558,7 +566,7 @@
     "save_numpy": true,
 
     "solution": {
-      "ode_method": "LSODA",
+      "ode_method": "RK45",
       "continuous_soln": false,
       "max_delta_t": 0.1,
       "min_delta_t": 0.0005,
@@ -572,7 +580,7 @@
     "inspect_t_seconds": 0.35,
     "inspect_t_samples": 3,
 
-    "sqrt_nodes": 64,
+    "sqrt_nodes": 56,
     "time": 5,
 
     "system": {
@@ -594,15 +602,16 @@
       "natural_freq": {
         "a": 1,
         "b": 0,
-        "c": 0.4
+        "c": 0.3
       },
       "driver": {
         "use_driver": true,
         "strength": "<x-var>",
         "freq": "<y-var>",
+        "scale": 0.25,
         "location": "center"
       }
     },
-    "gain_ratio": 2.0
+    "gain_ratio": 1.0
   }
 }
