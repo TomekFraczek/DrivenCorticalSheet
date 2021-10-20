@@ -205,7 +205,7 @@
       "repetitions": 1,
       "x-var": {
         "start": 0,
-        "stop": 1,
+        "stop": 2,
         "num": 10,
         "endpoint": true
       },
@@ -274,7 +274,7 @@
       "repetitions": 1,
       "x-var": {
         "start": 0,
-        "stop": 1,
+        "stop": 2,
         "num": 10,
         "endpoint": true
       },
@@ -343,7 +343,7 @@
       "repetitions": 1,
       "x-var": {
         "start": 0,
-        "stop": 1,
+        "stop": 2,
         "num": 10,
         "endpoint": true
       },
@@ -412,7 +412,7 @@
       "repetitions": 1,
       "x-var": {
         "start": 0,
-        "stop": 1,
+        "stop": 2,
         "num": 10,
         "endpoint": true
       },
@@ -481,7 +481,7 @@
       "repetitions": 1,
       "x-var": {
         "start": 0,
-        "stop": 1,
+        "stop": 2,
         "num": 10,
         "endpoint": true
       },
@@ -550,7 +550,7 @@
       "repetitions": 1,
       "x-var": {
         "start": 0,
-        "stop": 1,
+        "stop": 2,
         "num": 10,
         "endpoint": true
       },
