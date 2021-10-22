@@ -35,6 +35,10 @@ class KuramotoSystem(object):
         if self.external_input:
             self.n_inputs = np.prod(self.dims)
             stim_loc = self.input_params['location']
+            try:
+                dist_scale = self.input_params['scale']
+            except KeyError:
+                dist_scale = 1
 
             # Distance from the center of the sheet
             if stim_loc == 'center':
@@ -53,7 +57,7 @@ class KuramotoSystem(object):
             else:
                 raise KeyError('Unknown stimulator location!')
 
-            y_dist *= self.input_params['scale']
+            y_dist *= dist_scale
             y_dist[y_dist < 1] = 1
 
             self.input_weight = self.input_params['strength'] / y_dist ** 2
