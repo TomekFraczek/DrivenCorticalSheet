@@ -178,10 +178,11 @@ def main():
 
     args = parser.parse_args()
 
-    if args.restart:
-        redo_sweep(args.out, args.jobs)
-    elif args.addreps:
+    if args.addreps:
         more_reps(args.out, args.addreps)
+        args.restart = True
+
+    if args.restart:
         redo_sweep(args.out, args.jobs)
     else:
         do_sweep(args.out, args.config, args.jobs)
