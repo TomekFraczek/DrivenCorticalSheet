@@ -12,12 +12,20 @@ TIME_NAME = 'time', 'npy'
 LOG_NAME = 'log', 'txt'
 
 
+def safe_search(string, pattern, group=1):
+    try:
+        match = re.search(pattern, string).group(group)
+    except AttributeError:
+        match = None
+    return match
+
+
 def get_point_id(sim_folder):
-    return re.search('Point([0-9]*)', sim_folder.directory).group(1)
+    return safe_search(sim_folder.directory, 'Point([0-9]*)')
 
 
 def get_rep_id(sim_folder):
-    return re.search('Rep([0-9]*)', sim_folder.directory).group(1)
+    return safe_search(sim_folder.directory, 'Rep([0-9]*)')
 
 
 def completed_sims(source_dir):
