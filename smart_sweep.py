@@ -11,6 +11,7 @@ import numpy as np
 from joblib import Parallel, delayed
 
 from plotting.plotformat import PlotSetup, from_existing
+from plotting.common import get_point_id, get_rep_id, load_config
 from main import model, save_data, plot
 
 
@@ -35,6 +36,34 @@ def redo_sweep(out_dir, n_jobs):
     sure_run(incomplete, 0, n_jobs=n_jobs)
 
 
+def make_reps(point_path, rep_ids, config):
+    reps = []
+    for rep in rep_ids:
+        rep_fmt = PlotSetup(point_path.directory, f'Rep{rep}')
+        with open(rep_fmt.file_name('config', 'json'), 'w') as f:
+            json.dump(config, f, indent=2)
+        reps.append(rep_fmt)
+    return reps
+
+
+def more_reps(path_fmt, n_more_reps):
+    """Add an additional round of repetitions to all points in the sweep"""
+    new_runs = []
+
+    path_fmt = PlotSetup(path_fmt, build_new=False)
+    point_folders = [f for f in path_fmt.sub_folders() if get_point_id(f)]
+    for point in point_folders:
+        point_config = load_config(PlotSetup(point.directory, 'Rep0', build_new=False))
+
+        old_max = 1 + max([int(get_rep_id(f)) for f in point.sub_folders() if get_rep_id(f)])
+        new_max = old_max + n_more_reps
+
+        new_runs.extend(
+            make_reps(point, range(old_max, new_max), point_config)
+        )
+    return new_runs
+
+
 def prep_points(path_fmt, sweep_config):
     """Prepare all folders and the configurations for each of the points in the sweep"""
 
@@ -53,11 +82,9 @@ def prep_points(path_fmt, sweep_config):
 
         point_name = f'Point{i}'
         point_fmt = PlotSetup(path_fmt.directory, point_name)
-        for rep in range(sweep_config['point_config']['repetitions']):
-            rep_fmt = PlotSetup(point_fmt.directory, f'Rep{rep}')
-            with open(rep_fmt.file_name('config', 'json'), 'w') as f:
-                json.dump(conf_here, f, indent=2)
-            all_runs.append(rep_fmt)
+        all_runs.extend(
+            make_reps(point_fmt, range(conf_here["point_config"]["repetitions"]), conf_here)
+        )
     return all_runs
 
 
@@ -144,12 +171,21 @@ def main():
     parser.add_argument('--restart', action='store_true',
                         help='Whether to try and restart a previously started run')
 
+    parser.add_argument('--addreps', metavar='add more reps',
+                        type=int, nargs='?',
+                        help='The number of additional repetitions to run at each point',
+                        default=1)
+
     args = parser.parse_args()
 
     if args.restart:
         redo_sweep(args.out, args.jobs)
+    elif args.addreps:
+        more_reps(args.out, args.addreps)
+        redo_sweep(args.out, args.jobs)
     else:
         do_sweep(args.out, args.config, args.jobs)
+
 
 
 if __name__ == '__main__':
