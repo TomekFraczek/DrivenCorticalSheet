@@ -173,6 +173,7 @@ def plot_stim_strength(data_src):
 
     plt.figure(figsize=(8, 12))
     lim = max(np.abs(all_effects[2]))
+    lim = 1 if np.isnan(lim) or np.isinf(lim) else lim
 
     labels = ['Left Edge', 'Left Middle', 'Center', 'Right Middle', 'Right Edge']
 
