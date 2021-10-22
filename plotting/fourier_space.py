@@ -97,19 +97,19 @@ def fourier_cov(data_src):
     state_ffts, x_freqs, y_freqs = source_fourier_2d(data_src)
     freqs = np.unique(x_freqs)
     covariances = []
-    brute_covs = []
+    # brute_covs = []
     for i in range(state_ffts.shape[0]):
         fft = state_ffts[i, :, :]
-        brute_cov_here = dist_cov_brutish(x_freqs, y_freqs, fft)
+        # brute_cov_here = dist_cov_brutish(x_freqs, y_freqs, fft)
         cov_here = dist_cov(freqs, freqs, fft)
         covariances.append(cov_here)
-        brute_covs.append(brute_cov_here)
+        # brute_covs.append(brute_cov_here)
 
     covariances = np.array(covariances)
     np.save(data_src.file_name('fourier_covariances', 'npy'), covariances, allow_pickle=False)
 
-    brute_covs = np.array(brute_covs)
-    np.save(data_src.file_name('brute_fourier_covariances', 'npy'), brute_covs, allow_pickle=False)
+    # brute_covs = np.array(brute_covs)
+    # np.save(data_src.file_name('brute_fourier_covariances', 'npy'), brute_covs, allow_pickle=False)
 
     return covariances
 
