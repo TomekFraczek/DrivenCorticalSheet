@@ -28,6 +28,11 @@ def get_rep_id(sim_folder):
     return safe_search(sim_folder.directory, 'Rep([0-9]*)')
 
 
+def count_reps(point_folder):
+    reps = [f for f in point_folder.sub_folders() if get_rep_id(f)]
+    return len(reps)
+
+
 def completed_sims(source_dir):
     return [d for d in from_existing(source_dir) if d.has_file('completion', 'txt')]
 
@@ -78,7 +83,8 @@ def calc_sweep(source_dir, function, save_name):
         raise IndexError(f'No simulations available in: {source_dir}')
     x_vals = np.linspace(**point_conf['x-var'])
     y_vals = np.linspace(**point_conf['y-var'])
-    n_xs, n_ys, n_reps = len(x_vals), len(y_vals), point_conf['repetitions']
+    n_xs, n_ys, = len(x_vals), len(y_vals)
+    n_reps = count_reps(all_sims[0].parent())
 
     # Calculate all the desired values for each simulation, storing each value in a separate array
     all_values = []

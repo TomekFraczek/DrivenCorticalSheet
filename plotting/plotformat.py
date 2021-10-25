@@ -90,20 +90,24 @@ class PlotSetup(object):
                 folders.append(fmt)
         return folders
 
+    def parent(self):
+        par_dir = os.path.dirname(self.directory)
+        return PlotSetup(par_dir, build_new=False)
+
     @staticmethod
     def set_mpl_params():
         """matplotlib parameters plot formatting"""
-        mpl.rcParams['axes.labelsize'] = 21
-        mpl.rcParams['axes.titlesize'] = 17
-        mpl.rcParams['xtick.labelsize'] = 22
-        mpl.rcParams['ytick.labelsize'] = 22
+        mpl.rcParams['axes.labelsize'] = 16
+        mpl.rcParams['axes.titlesize'] = 14
+        mpl.rcParams['xtick.labelsize'] = 16
+        mpl.rcParams['ytick.labelsize'] = 14
         mpl.rcParams['axes.xmargin'] = 0
         mpl.rcParams['axes.ymargin'] = 0
         mpl.rcParams['lines.linewidth'] = 2.8
         mpl.rcParams['lines.markersize'] = 18
         mpl.rcParams['lines.markeredgewidth'] = 3
         mpl.rcParams['legend.framealpha'] = 0.93
-        mpl.rcParams['legend.fontsize'] = 20
+        mpl.rcParams['legend.fontsize'] = 14
 
     # ax.xaxis.set_major_formatter(mpl.ticker.FormatStrFormatter('%g $\pi$'))
     # ax.xaxis.set_major_locator(matplotlib.ticker.FixedLocator([1,5,8]))
