@@ -174,7 +174,7 @@ def main():
     parser.add_argument('--addreps', metavar='add more reps',
                         type=int, nargs='?',
                         help='The number of additional repetitions to run at each point',
-                        default=1)
+                        default=0)
 
     args = parser.parse_args()
 
