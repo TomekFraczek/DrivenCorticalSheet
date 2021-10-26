@@ -4,6 +4,7 @@ import re
 import argparse
 
 import numpy as np
+from joblib import Parallel, delayed
 from matplotlib import pyplot as plt
 from plotting.animate import animate_one
 from plotting.common import completed_sims
@@ -36,15 +37,21 @@ SWEEP_PLOTS = {
 }
 
 
-def plot_individual(source_dir):
+def plot_folder(sim_folder):
+    print(f'Processing {sim_folder}..')
+    for plot_name, plot_func in PLOT_FUNCTIONS.items():
+        if not sim_folder.has_file(plot_name):
+            print(f'    Running {plot_name}...')
+            plot_func(sim_folder)
+            plt.close()
+
+
+def plot_individual(source_dir, n_jobs=-1):
     """Run all the single-run plotting functions currently listed"""
-    for sim_folder in completed_sims(source_dir):
-        print(f'Processing {sim_folder}..')
-        for plot_name, plot_func in PLOT_FUNCTIONS.items():
-            if not sim_folder.has_file(plot_name):
-                print(f'    Running {plot_name}...')
-                plot_func(sim_folder)
-                plt.close()
+    Parallel(n_jobs=n_jobs, verbose=20)(
+        delayed(plot_folder)(sim_folder)
+        for sim_folder in completed_sims(source_dir)
+    )
 
 
 def plot_sweeps(source_dir):
