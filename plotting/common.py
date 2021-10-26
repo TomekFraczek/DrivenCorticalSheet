@@ -146,8 +146,12 @@ def match_varname(strings, variable):
 
 
 def var_names(sweep_src):
-    with open(sweep_src.file_name('config', 'json')) as f:
-        lines = f.readlines()
+    try:
+        with open(sweep_src.file_name('sweep_config', 'json')) as f:
+            lines = f.readlines()
+    except FileNotFoundError:
+        with open(sweep_src.file_name('config', 'json')) as f:
+            lines = f.readlines()
     x_name = match_varname(lines, 'x')
     y_name = match_varname(lines, 'y')
     return x_name, y_name
