@@ -54,8 +54,20 @@ def load_sim_time(data_src):
 
 
 def load_config(data_src):
-    with open(data_src.file_name('config', 'json')) as f:
+    try:
+        f = open(data_src.file_name('config', 'json'))
+    except FileNotFoundError:
+        try:
+            f = open(data_src.file_name('sweep_config', 'json'))
+        except FileNotFoundError:
+            raise FileNotFoundError(f'Could not find config.json or sweep_config.json in: \n   {data_src.directory}')
+        else:
+            conf = json.load(f)
+            f.close()
+    else:
         conf = json.load(f)
+        f.close()
+
     return conf
 
 
