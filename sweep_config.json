@@ -133,19 +133,19 @@
     },
     "gain_ratio": "<x-var>"
   },
-  "undriven_sweep": {
+  "undriven_sweep_s2": {
     "point_config": {
-      "repetitions": 5,
+      "repetitions": 3,
       "x-var": {
         "start": 0,
-        "stop": 7,
-        "num": 10,
+        "stop": 4,
+        "num": 8,
         "endpoint": true
       },
       "y-var": {
         "start": 0,
-        "stop": 0.9,
-        "num": 10,
+        "stop": 1.0,
+        "num": 8,
         "endpoint": true
       }
     },
@@ -154,7 +154,7 @@
     "save_numpy": true,
 
      "solution": {
-      "ode_method": "LSODA",
+      "ode_method": "RK45",
       "continuous_soln": false,
       "max_delta_t":0.1,
       "min_delta_t": 0.0005,
@@ -166,7 +166,74 @@
     "inspect_t_seconds": 0.35,
     "inspect_t_samples": 3,
 
-    "sqrt_nodes": 90,
+    "sqrt_nodes": 56,
+    "time": 5,
+
+    "system": {
+      "initial": {
+        "type": "uniform",
+        "low": 0,
+        "high": 6.28318
+      },
+      "interaction" : {
+        "beta": "<y-var>",
+        "r": 0.25
+      },
+      "kernel" : {
+        "type": "wavelet",
+        "s":2,
+        "width": 16
+      },
+      "normalize_kernel": false,
+      "natural_freq": {
+        "a": 1,
+        "b": 0,
+        "c": 0.4
+      },
+      "driver": {
+        "use_driver": false,
+        "strength": 0,
+        "freq": 0.25,
+        "scale": 0.25,
+        "location": "top"
+      }
+    },
+    "gain_ratio": "<x-var>"
+  },
+  "undriven_sweep_s3": {
+    "point_config": {
+      "repetitions": 3,
+      "x-var": {
+        "start": 0,
+        "stop": 4,
+        "num": 8,
+        "endpoint": true
+      },
+      "y-var": {
+        "start": 0,
+        "stop": 1.0,
+        "num": 8,
+        "endpoint": true
+      }
+    },
+
+    "output_dir_name": "placeholder",
+    "save_numpy": true,
+
+     "solution": {
+      "ode_method": "RK45",
+      "continuous_soln": false,
+      "max_delta_t":0.1,
+      "min_delta_t": 0.0005,
+      "zero_ics": false
+    },
+    "frames": 100,
+    "frame_rate": 0.10,
+    "interpolate_plot": false,
+    "inspect_t_seconds": 0.35,
+    "inspect_t_samples": 3,
+
+    "sqrt_nodes": 56,
     "time": 5,
 
     "system": {
@@ -182,7 +249,7 @@
       "kernel" : {
         "type": "wavelet",
         "s":3,
-        "width": 8
+        "width": 16
       },
       "normalize_kernel": false,
       "natural_freq": {
