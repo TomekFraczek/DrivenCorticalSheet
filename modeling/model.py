@@ -32,39 +32,44 @@ class KuramotoSystem(object):
 
         self.input_params = system_params['driver']
         self.external_input = self.input_params['use_driver']
+        self.input_weight = 0
+        self.n_inputs = np.prod(self.dims)
+        self.input_weight = 0
+        self.input_freq = None
+        self.input_effect = np.zeros((np.prod(array_size),))
+
         if self.external_input:
-            self.n_inputs = np.prod(self.dims)
-            stim_loc = self.input_params['location']
-            try:
-                dist_scale = self.input_params['scale']
-            except KeyError:
-                dist_scale = 1
-
-            # Distance from the center of the sheet
-            if stim_loc == 'center':
-                u, v = np.meshgrid(np.arange(self.dims[0]), np.arange(self.dims[1]), sparse=False, indexing='xy')
-                u, v = u.ravel(), v.ravel()
-                x = [round(self.dims[0]/2), round(self.dims[1]/2)]
-                y_dist = np.array(np.sqrt((u - x[0])**2 + (v - x[1])**2))
-
-            # Distance from the top row
-            elif stim_loc == 'top':
-                y_dist = (np.array(range(self.n_inputs)) + self.dims[1]) // (self.dims[1])
-
-            elif stim_loc == 'uniform':
-                y_dist = np.ones((np.prod(array_size),))
-
-            else:
-                raise KeyError('Unknown stimulator location!')
-
-            y_dist *= dist_scale
-            y_dist[y_dist < 1] = 1
-
-            self.input_weight = self.input_params['strength'] / y_dist ** 2
-            self.input_freq = self.input_params['freq']
-            self.input_effect = np.zeros((np.prod(array_size),))
+            self.prep_input()
 
         print('System ready!')
+
+    def prep_input(self):
+        stim_loc = self.input_params['location']
+        try:
+            dist_scale = self.input_params['scale']
+        except KeyError:
+            dist_scale = 1
+
+        # Distance from the center of the sheet
+        if stim_loc == 'center':
+            u, v = np.meshgrid(np.arange(self.dims[0]), np.arange(self.dims[1]), sparse=False, indexing='xy')
+            u, v = u.ravel(), v.ravel()
+            x = [round(self.dims[0] / 2), round(self.dims[1] / 2)]
+            y_dist = np.array(np.sqrt((u - x[0]) ** 2 + (v - x[1]) ** 2))
+
+        # Distance from the top row
+        elif stim_loc == 'top':
+            y_dist = (np.array(range(self.n_inputs)) + self.dims[1]) // (self.dims[1])
+        elif stim_loc == 'uniform':
+            y_dist = np.ones((np.prod(self.dims),))
+        else:
+            raise KeyError('Unknown stimulator location!')
+
+        y_dist *= dist_scale
+        y_dist[y_dist < 1] = 1
+
+        self.input_weight = self.input_params['strength'] / y_dist ** 2
+        self.input_freq = self.input_params['freq']
 
     def compare_inputs(self, t, phases):
         """Compare the strength of the external input to the effect of the other oscillators in the sheet"""
@@ -134,6 +139,10 @@ class KuramotoSystem(object):
                          )
 
     def calc_input(self, t: float, all_phases: np.ndarray):
+        if not self.external_input:
+            # Input dat should not have been initialized, so this will be all zeros
+            return self.input_effect
+
         osc_phases = all_phases[:self.n_inputs]
         input_phase = self.input_freq * t * 2*np.pi
         deltas = input_phase - osc_phases
