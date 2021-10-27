@@ -138,14 +138,14 @@
       "repetitions": 3,
       "x-var": {
         "start": 0,
-        "stop": 4,
-        "num": 8,
+        "stop": 3,
+        "num": 12,
         "endpoint": true
       },
       "y-var": {
         "start": 0,
         "stop": 1.0,
-        "num": 8,
+        "num": 12,
         "endpoint": true
       }
     },
@@ -205,14 +205,14 @@
       "repetitions": 3,
       "x-var": {
         "start": 0,
-        "stop": 4,
-        "num": 8,
+        "stop": 3,
+        "num": 12,
         "endpoint": true
       },
       "y-var": {
         "start": 0,
         "stop": 1.0,
-        "num": 8,
+        "num": 12,
         "endpoint": true
       }
     },
