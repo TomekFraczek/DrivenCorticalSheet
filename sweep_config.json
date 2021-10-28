@@ -318,7 +318,7 @@
       "kernel" : {
         "type": "wavelet",
         "s":2,
-        "width": 16
+        "width": 10
       },
       "normalize_kernel": false,
       "natural_freq": {
@@ -330,7 +330,7 @@
         "use_driver": true,
         "strength": "<x-var>",
         "freq": "<y-var>",
-        "scale": 0.25,
+        "scale": 0.5,
         "location": "center"
       }
     },
@@ -387,7 +387,7 @@
       "kernel" : {
         "type": "wavelet",
         "s":3,
-        "width": 16
+        "width": 10
       },
       "normalize_kernel": false,
       "natural_freq": {
@@ -399,7 +399,7 @@
         "use_driver": true,
         "strength": "<x-var>",
         "freq": "<y-var>",
-        "scale": 0.25,
+        "scale": 0.5,
         "location": "center"
       }
     },
@@ -456,7 +456,7 @@
       "kernel" : {
         "type": "wavelet",
         "s":2,
-        "width": 16
+        "width": 10
       },
       "normalize_kernel": false,
       "natural_freq": {
@@ -468,7 +468,7 @@
         "use_driver": true,
         "strength": "<x-var>",
         "freq": "<y-var>",
-        "scale": 0.25,
+        "scale": 0.5,
         "location": "center"
       }
     },
@@ -525,7 +525,7 @@
       },
       "kernel" : {
         "s":3,
-        "width": 16
+        "width": 10
       },
       "normalize_kernel": false,
       "natural_freq": {
@@ -537,7 +537,7 @@
         "use_driver": true,
         "strength": "<x-var>",
         "freq": "<y-var>",
-        "scale": 0.25,
+        "scale": 0.5,
         "location": "center"
       }
     },
@@ -594,7 +594,7 @@
       },
       "kernel" : {
         "s":3,
-        "width": 16
+        "width": 10
       },
       "normalize_kernel": false,
       "natural_freq": {
@@ -606,7 +606,7 @@
         "use_driver": true,
         "strength": "<x-var>",
         "freq": "<y-var>",
-        "scale": 0.25,
+        "scale": 0.5,
         "location": "center"
       }
     },
@@ -663,7 +663,7 @@
       "kernel" : {
         "type": "wavelet",
         "s":2,
-        "width": 16
+        "width": 10
       },
       "normalize_kernel": false,
       "natural_freq": {
@@ -675,7 +675,7 @@
         "use_driver": true,
         "strength": "<x-var>",
         "freq": "<y-var>",
-        "scale": 0.25,
+        "scale": 0.5,
         "location": "center"
       }
     },
