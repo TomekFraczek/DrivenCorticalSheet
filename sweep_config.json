@@ -267,6 +267,144 @@
     },
     "gain_ratio": "<x-var>"
   },
+  "drive_sweep_s2_b03": {
+    "point_config": {
+      "repetitions": 1,
+      "x-var": {
+        "start": 0,
+        "stop": 2,
+        "num": 10,
+        "endpoint": true
+      },
+      "y-var": {
+        "start": 0.1,
+        "stop": 2,
+        "num": 10,
+        "endpoint": true
+      }
+    },
+
+    "output_dir_name": "placeholder",
+    "save_numpy": true,
+
+    "solution": {
+      "ode_method": "RK45",
+      "continuous_soln": false,
+      "max_delta_t": 0.1,
+      "min_delta_t": 0.0005,
+      "zero_ics": false,
+      "rtol": 1e-2,
+      "atol": 1e-4
+    },
+    "frames": 100,
+    "frame_rate": 0.10,
+    "interpolate_plot": false,
+    "inspect_t_seconds": 0.35,
+    "inspect_t_samples": 3,
+
+    "sqrt_nodes": 56,
+    "time": 5,
+
+    "system": {
+      "initial": {
+        "type": "uniform",
+        "low": 0,
+        "high": 6.28318
+      },
+      "interaction" : {
+        "beta": 0.3,
+        "r": 0.25
+      },
+      "kernel" : {
+        "type": "wavelet",
+        "s":2,
+        "width": 10
+      },
+      "normalize_kernel": false,
+      "natural_freq": {
+        "a": 1,
+        "b": 0,
+        "c": 0.3
+      },
+      "driver": {
+        "use_driver": true,
+        "strength": "<x-var>",
+        "freq": "<y-var>",
+        "scale": 0.5,
+        "location": "center"
+      }
+    },
+    "gain_ratio": 0.5
+  },
+  "drive_sweep_s3_b03": {
+    "point_config": {
+      "repetitions": 1,
+      "x-var": {
+        "start": 0,
+        "stop": 2,
+        "num": 10,
+        "endpoint": true
+      },
+      "y-var": {
+        "start": 0.1,
+        "stop": 2,
+        "num": 10,
+        "endpoint": true
+      }
+    },
+
+    "output_dir_name": "placeholder",
+    "save_numpy": true,
+
+    "solution": {
+      "ode_method": "RK45",
+      "continuous_soln": false,
+      "max_delta_t": 0.1,
+      "min_delta_t": 0.0005,
+      "zero_ics": false,
+      "rtol": 1e-2,
+      "atol": 1e-4
+    },
+    "frames": 100,
+    "frame_rate": 0.10,
+    "interpolate_plot": false,
+    "inspect_t_seconds": 0.35,
+    "inspect_t_samples": 3,
+
+    "sqrt_nodes": 56,
+    "time": 5,
+
+    "system": {
+      "initial": {
+        "type": "uniform",
+        "low": 0,
+        "high": 6.28318
+      },
+      "interaction" : {
+        "beta": 0.3,
+        "r": 0.25
+      },
+      "kernel" : {
+        "type": "wavelet",
+        "s":3,
+        "width": 10
+      },
+      "normalize_kernel": false,
+      "natural_freq": {
+        "a": 1,
+        "b": 0,
+        "c": 0.3
+      },
+      "driver": {
+        "use_driver": true,
+        "strength": "<x-var>",
+        "freq": "<y-var>",
+        "scale": 0.5,
+        "location": "center"
+      }
+    },
+    "gain_ratio": 0.5
+  },
   "drive_sweep_s2_b06": {
     "point_config": {
       "repetitions": 1,
@@ -334,7 +472,7 @@
         "location": "center"
       }
     },
-    "gain_ratio": 0.5
+    "gain_ratio": 0.75
   },
   "drive_sweep_s3_b06": {
     "point_config": {
@@ -403,7 +541,7 @@
         "location": "center"
       }
     },
-    "gain_ratio": 0.5
+    "gain_ratio": 0.75
   },
   "drive_sweep_s2_b08": {
     "point_config": {
@@ -472,7 +610,7 @@
         "location": "center"
       }
     },
-    "gain_ratio": 0.75
+    "gain_ratio": 1.0
   },
   "drive_sweep_s3_b08": {
     "point_config": {
@@ -541,7 +679,7 @@
         "location": "center"
       }
     },
-    "gain_ratio": 0.75
+    "gain_ratio": 1.0
   },
   "drive_sweep_s3_b10": {
     "point_config": {
@@ -610,7 +748,7 @@
         "location": "center"
       }
     },
-    "gain_ratio": 1.0
+    "gain_ratio": 1.5
   },
   "drive_sweep_s2_b10": {
     "point_config": {
@@ -679,6 +817,6 @@
         "location": "center"
       }
     },
-    "gain_ratio": 1.0
+    "gain_ratio": 1.5
   }
 }
